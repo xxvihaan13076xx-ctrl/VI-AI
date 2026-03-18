@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIA AI | AI Adaptive Hub</title>
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --card-bg: #0f0f0f;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ff;
+            --neon-green: #39ff14;
+            --neon-orange: #ff6200;
+            --text-main: #e0e0e0;
+            /* VIA Database Colors */
+            --via-green: #00ff88;
+            --via-cyan: #00d9ff;
+            --via-purple: #bc13fe;
+            --via-magenta: #ff00d4;
+            --via-red: #ff3131;
+            --via-gold: #ffcc00;
+            --via-blue: #2979ff;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .stats-bar {
+            width: 100%;
+            background: rgba(10, 10, 10, 0.98);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #333;
+            text-align: center;
+        }
+
+        .xp-container {
+            width: 80%; max-width: 400px; height: 10px;
+            background: #1a1a1a; border-radius: 10px; margin: 8px auto;
+            overflow: hidden; border: 1px solid #444;
+        }
+
+        #xp-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            box-shadow: 0 0 15px var(--neon-cyan);
+            transition: width 0.4s ease;
+        }
+
+        header { padding: 30px; text-align: center; }
+        h1 { color: var(--neon-cyan); text-shadow: 0 0 20px var(--neon-cyan); letter-spacing: 6px; margin: 0; font-size: 2.2rem; }
+
+        .container { width: 92%; max-width: 650px; }
+
+        .glass-card {
+            background: var(--card-bg); padding: 25px; border-radius: 20px;
+            border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%; padding: 15px; background: #000;
+            border: 1px solid #444; border-radius: 10px; color: white;
+            margin-bottom: 15px; box-sizing: border-box; outline: none; font-size: 1rem;
+        }
+
+        .btn-group { display: flex; gap: 10px; }
+        @media (max-width: 400px) { .btn-group { flex-direction: column; } }
+
+        button {
+            flex: 1; padding: 15px; background: transparent; font-weight: bold;
+            text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: 0.3s;
+        }
+
+        .btn-cyan { border: 2px solid var(--neon-cyan); color: var(--neon-cyan); }
+        .btn-cyan:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+        .btn-cyan:disabled { border-color: #444; color: #444; cursor: not-allowed; }
+
+        .btn-mix { border: 2px solid var(--neon-orange); color: var(--neon-orange); }
+        .btn-mix:hover { background: var(--neon-orange); color: #000; box-shadow: 0 0 15px var(--neon-orange); }
+
+        #console { font-family: 'Courier New', monospace; font-size: 0.8rem; color: #666; margin-bottom: 10px; min-height: 1.2rem; }
+        
+        .activity-card {
+            background: var(--card-bg); border-left: 6px solid #444;
+            padding: 20px; margin-top: 20px; border-radius: 12px;
+            animation: slideIn 0.4s ease-out forwards;
+        }
+
+        .video-wrapper {
+            position: relative; padding-bottom: 56.25%; height: 0;
+            border-radius: 10px; overflow: hidden; margin-top: 15px; background: #000;
+        }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        .timer { font-size: 2.8rem; font-weight: bold; color: var(--neon-orange); margin: 15px 0; font-family: monospace; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="stats-bar">
+        <div style="font-weight: bold; letter-spacing: 2px; font-size: 0.8rem;">LEVEL: <span id="lvl" style="color:var(--neon-magenta)">1</span> OPERATIVE</div>
+        <div class="xp-container"><div id="xp-fill"></div></div>
+        <div style="font-size: 0.65rem; color: #888;">XP: <span id="xp-val">0</span> / 100</div>
+    </div>
+
+    <header><h1> VIA AI</h1></header>
+
+    <div class="container">
+        <div class="glass-card">
+            <input type="text" id="userInput" placeholder="Interest (Photography, Football, Cooking)...">
+            <div class="btn-group">
+                <button class="btn-cyan" id="btnPulse" onclick="processAI('interest')">Pulse Interest</button>
+                <button class="btn-mix" id="btnHome" onclick="processAI('domestic')">Home & Override</button>
+            </div>
+        </div>
+
+        <div id="console"></div>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const taskDatabase = [
+            {t: "GRID_PURGE", d: "Delete 50 useless screenshots/duplicates from your phone gallery.", c: "var(--via-green)"},
+            {t: "HARDWARE_SYNC", d: "Deep-clean your keyboard, mouse, and phone screen with microfiber.", c: "var(--via-cyan)"},
+            {t: "CABLE_ARRAY", d: "Untangle the messiest cable cluster in your room. Route them perfectly.", c: "var(--via-purple)"},
+            {t: "SANCTUM_RESET", d: "Clear everything off your desk. Wipe the surface. Replace only essentials.", c: "var(--via-magenta)"},
+            {t: "CLOSET_INDEX", d: "Discard 3 items of clothing you haven't worn in 6 months.", c: "var(--via-green)"},
+            {t: "LENS_POLISH", d: "Wipe every camera lens (phone, laptop, webcam) for optic clarity.", c: "var(--via-cyan)"},
+            {t: "DRAWER_AUDIT", d: "Organize the 'junk drawer'. Throw away 5 items of trash.", c: "var(--via-red)"},
+            {t: "SHELF_SYMMETRY", d: "Align all books/objects on one shelf so they are perfectly flush.", c: "var(--via-purple)"},
+            {t: "MIRROR_SYNC", d: "Clean the main mirror in your room until it's streak-free.", c: "var(--via-cyan)"},
+            {t: "TRASH_FLUSH", d: "Empty every trash bin in your home and replace the liners.", c: "var(--via-red)"},
+            {t: "BED_ALGORITHM", d: "Tighten your bed sheets and fluff all pillows for maximum comfort.", c: "var(--via-magenta)"},
+            {t: "SHOE_CLEANSE", d: "Clean the soles/sides of your most-worn pair of shoes.", c: "var(--via-green)"},
+            {t: "APPLIANCE_WIPE", d: "Clean the exterior of your fridge, microwave, and kettle.", c: "var(--via-cyan)"},
+            {t: "DESK_UNDERSIDE", d: "Wipe the dust/cobwebs from underneath your desk and chair legs.", c: "var(--via-red)"},
+            {t: "WALLET_PURGE", d: "Remove old receipts and useless cards from your physical wallet.", c: "var(--via-gold)"},
+            {t: "KEY_SYNC", d: "Sanitize your house/car keys. They carry significant bacteria.", c: "var(--via-cyan)"},
+            {t: "FLOOR_SWEEP", d: "Sweep/Vacuum the high-traffic zones of your immediate room.", c: "var(--via-magenta)"},
+            {t: "WINDOW_CLEAR", d: "Clean one window to maximize natural light penetration.", c: "var(--via-cyan)"},
+            {t: "BATHROOM_SYNC", d: "Deep-clean the sink and faucet in your primary bathroom.", c: "var(--via-red)"},
+            {t: "FRIDGE_AUDIT", d: "Throw away 3 expired items from the refrigerator.", c: "var(--via-green)"},
+            {t: "TECH_SCREEN", d: "Clean your monitor/TV screen using proper screen cleaner.", c: "var(--via-cyan)"},
+            {t: "DOORKNOB_SYNC", d: "Sanitize every doorknob and light switch in your home.", c: "var(--via-red)"},
+            {t: "CLOTH_WASH", d: "Load the washing machine or fold a fresh batch of laundry.", c: "var(--via-purple)"},
+            {t: "BOOK_DUST", d: "Dust the tops of your books and your bookshelf framework.", c: "var(--via-magenta)"},
+            {t: "SINK_DRAIN", d: "Flush your kitchen sink with hot water/vinegar to clear build-up.", c: "var(--via-green)"},
+            {t: "REMOTE_CLEANSE", d: "Wipe down all TV and AC remotes in the house.", c: "var(--via-cyan)"},
+            {t: "BAG_AUDIT", d: "Empty your daily backpack/bag. Remove trash and reorganize.", c: "var(--via-gold)"},
+            {t: "PLANT_CARE", d: "Water your plants and wipe dust off their leaves.", c: "var(--via-green)"},
+            {t: "VENT_CLEAN", d: "Dust the AC vents or fan blades in your current room.", c: "var(--via-red)"},
+            {t: "CURTAIN_SHAKE", d: "Shake out your curtains/blinds to remove trapped dust particles.", c: "var(--via-magenta)"},
+            {t: "INTEL_SCAN", d: "Read 10 pages of a non-fiction book. Summarize it in one note.", c: "var(--via-gold)"},
+            {t: "VOCAB_SYNC", d: "Learn 3 new advanced words and use them in a sentence.", c: "var(--via-purple)"},
+            {t: "GOAL_ENCRYPTION", d: "Write down 3 specific targets for the next 24 hours.", c: "var(--via-cyan)"},
+            {t: "MEDITATION_PULSE", d: "Sit in total silence for 5 minutes. Observe your breathing.", c: "var(--via-magenta)"},
+            {t: "JOURNAL_LOG", d: "Write 3 things you are grateful for in a physical or digital log.", c: "var(--via-gold)"},
+            {t: "ARTICLE_DIVE", d: "Read one long-form article about technology or science.", c: "var(--via-purple)"},
+            {t: "PODCAST_SYNC", d: "Listen to 15 minutes of an educational podcast.", c: "var(--via-cyan)"},
+            {t: "WIKIPEDIA_SHUFFLE", d: "Read 3 random Wikipedia pages to expand general knowledge.", c: "var(--via-magenta)"},
+            {t: "BRAIN_TRAIN", d: "Solve one Sudoku, Crossword, or Logic Puzzle.", c: "var(--via-gold)"},
+            {t: "POETRY_SYNC", d: "Read one classic poem and analyze its core metaphor.", c: "var(--via-purple)"},
+            {t: "LANGUAGE_DRILL", d: "Practice 10 minutes of a new language (Duolingo/Notes).", c: "var(--via-green)"},
+            {t: "QUOTATION_LOG", d: "Find a powerful quote and set it as your lock screen.", c: "var(--via-cyan)"},
+            {t: "FUTURE_VISUAL", d: "Spend 3 minutes visualizing your ideal life 5 years from now.", c: "var(--via-magenta)"},
+            {t: "MEMORY_TEST", d: "Memorize a 10-digit number or a short list of 10 items.", c: "var(--via-gold)"},
+            {t: "TED_TALK_SYNC", d: "Watch one 10-minute TED talk on a topic you know nothing about.", c: "var(--via-purple)"},
+            {t: "DEEP_FOCUS", d: "Work on your hardest task for 20 minutes without looking at your phone.", c: "var(--via-red)"},
+            {t: "SKILL_REWATCH", d: "Watch a tutorial on a skill you already have to refine it.", c: "var(--via-cyan)"},
+            {t: "PLANNER_SYNC", d: "Check your calendar for the week. Adjust any conflicts.", c: "var(--via-gold)"},
+            {t: "STOIC_REFLECT", d: "Think about one thing you cannot control and let it go.", c: "var(--via-magenta)"},
+            {t: "CREATIVE_BLAST", d: "Draw, write, or build something useless for 10 minutes.", c: "var(--via-purple)"},
+            {t: "HYDRATION_REFILL", d: "Drink 500ml of water immediately. Clean the glass after.", c: "var(--via-cyan)"},
+            {t: "POSTURE_CORRECT", d: "Stand against a wall for 2 minutes to reset spinal alignment.", c: "var(--via-gold)"},
+            {t: "EYE_RELAX", d: "Look at something 20 feet away for 20 seconds (20-20-20 rule).", c: "var(--via-magenta)"},
+            {t: "STRETCH_PULSE", d: "Touch your toes and hold for 30 seconds. Repeat 3 times.", c: "var(--via-green)"},
+            {t: "NECK_RELEASE", d: "Execute slow neck circles to release tension from screen time.", c: "var(--via-cyan)"},
+            {t: "FACE_WASH", d: "Splash cold water on your face to trigger the diving reflex.", c: "var(--via-red)"},
+            {t: "SUNLIGHT_UPLINK", d: "If daytime, stand in direct sunlight for 5 minutes.", c: "var(--via-gold)"},
+            {t: "PUSHUP_SYNC", d: "Perform 15 perfect-form pushups. Reset your energy.", c: "var(--via-red)"},
+            {t: "SQUAT_SYNC", d: "Perform 20 deep squats to trigger blood flow to the brain.", c: "var(--via-red)"},
+            {t: "NAIL_MAINTENANCE", d: "Check and trim your fingernails/toenails if necessary.", c: "var(--via-green)"},
+            {t: "TEETH_FLOSS", d: "Floss your teeth and use mouthwash for a hygiene reset.", c: "var(--via-cyan)"},
+            {t: "CORE_ENGAGE", d: "Hold a plank for 45 seconds right now.", c: "var(--via-gold)"},
+            {t: "WRIST_STRETCH", d: "Stretch your wrists and fingers to prevent carpal tunnel.", c: "var(--via-magenta)"},
+            {t: "JUMPING_JACKS", d: "Do 30 jumping jacks to spike your heart rate.", c: "var(--via-red)"},
+            {t: "DEEP_BREATH", d: "Perform 10 Box Breaths (4s inhale, 4s hold, 4s exhale, 4s hold).", c: "var(--via-purple)"},
+            {t: "FOOT_MASSAGE", d: "Roll your feet over a tennis ball or massage them manually.", c: "var(--via-green)"},
+            {t: "COLD_SHOWER", d: "Take a 2-minute cold shower to boost dopamine/alertness.", c: "var(--via-cyan)"},
+            {t: "BALANCE_TEST", d: "Stand on one leg for 45 seconds. Then switch legs.", c: "var(--via-gold)"},
+            {t: "FRUIT_CONSUME", d: "Eat one piece of fruit. Log the nutritional value.", c: "var(--via-green)"},
+            {t: "SHIRT_CHANGE", d: "Change into a fresh, clean shirt to reset your mood.", c: "var(--via-magenta)"},
+            {t: "INBOX_ZERO", d: "Archive or delete every email older than 14 days.", c: "var(--via-green)"},
+            {t: "PASSWORD_AUDIT", d: "Update one major password to a high-entropy string.", c: "var(--via-red)"},
+            {t: "APP_PURGE", d: "Delete 3 apps you haven't opened in the last month.", c: "var(--via-magenta)"},
+            {t: "DESKTOP_CLEAN", d: "Remove every file from your desktop. Organize into folders.", c: "var(--via-cyan)"},
+            {t: "BOOKMARK_SYNC", d: "Delete 10 bookmarks you no longer visit.", c: "var(--via-purple)"},
+            {t: "NOTIFICATION_OFF", d: "Turn off notifications for one social media app permanently.", c: "var(--via-red)"},
+            {t: "SOFTWARE_UPDATE", d: "Check for OS or App updates. Install the latest patches.", c: "var(--via-gold)"},
+            {t: "CLOUD_BACKUP", d: "Ensure your most important photos/files are synced to cloud.", c: "var(--via-magenta)"},
+            {t: "SUBSCRIPTION_SCAN", d: "Check your bank for any recurring subs you don't use.", c: "var(--via-red)"},
+            {t: "CONTACT_CLEAN", d: "Delete 5 contacts from your phone that you don't recognize.", c: "var(--via-green)"},
+            {t: "OFFLINE_MODE", d: "Put your phone in another room for 30 minutes. Focus.", c: "var(--via-gold)"},
+            {t: "HISTORY_FLUSH", d: "Clear your browser history and cookies for privacy.", c: "var(--via-cyan)"},
+            {t: "DARK_MODE_SYNC", d: "Ensure all your apps are using Dark Mode to save eyes/battery.", c: "var(--via-purple)"},
+            {t: "DOCK_REORG", d: "Reorganize your phone's home screen for productivity apps.", c: "var(--via-magenta)"},
+            {t: "CACHE_PURGE", d: "Clear the cache on your most-used social media app.", c: "var(--via-green)"},
+            {t: "WIFI_RESET", d: "Restart your router to clear signal interference.", c: "var(--via-red)"},
+            {t: "FILE_RENAME", d: "Rename 10 messy files (e.g., 'IMG_01') to descriptive names.", c: "var(--via-cyan)"},
+            {t: "DM_CLEANSE", d: "Delete old, dead conversations from your DMs.", c: "var(--via-purple)"},
+            {t: "PODCAST_CLEAN", d: "Unsubscribe from podcasts you no longer listen to.", c: "var(--via-magenta)"},
+            {t: "SPEED_TEST", d: "Run an internet speed test. Note the ping and jitter.", c: "var(--via-gold)"},
+            {t: "BATTERY_HEALTH", d: "Check your phone's battery health % and adjust settings.", c: "var(--via-green)"},
+            {t: "TEMP_FILE_DEL", d: "Run 'Disk Cleanup' or delete the 'Downloads' folder contents.", c: "var(--via-red)"},
+            {t: "WALLPAPER_REFRESH", d: "Change your PC/Phone wallpaper to a motivating image.", c: "var(--via-cyan)"},
+            {t: "TAB_KILL", d: "Close every browser tab you aren't currently using.", c: "var(--via-magenta)"},
+            {t: "STRAY_CABLE_FIND", d: "Find one cable that isn't plugged in and store it correctly.", c: "var(--via-purple)"},
+            {t: "TECH_INVENTORY", d: "List all your hardware serial numbers for insurance.", c: "var(--via-gold)"},
+            {t: "SOUND_TEST", d: "Clean your speakers/earbuds with a soft brush.", c: "var(--via-cyan)"},
+            {t: "YOUTUBE_UNSUB", d: "Unsubscribe from 3 channels that no longer add value.", c: "var(--via-red)"},
+            {t: "LINKEDIN_SYNC", d: "Update your professional bio or profile picture.", c: "var(--via-blue)"},
+            {t: "DATA_EXPORT", d: "Download a backup of your data from a major platform.", c: "var(--via-magenta)"}
+        ];
+
+        let xp = parseInt(localStorage.getItem('np_xp')) || 0;
+        let lvl = parseInt(localStorage.getItem('np_lvl')) || 1;
+        let activeInterval = null;
+
+        updateUI();
+
+        async function processAI(mode) {
+            const input = document.getElementById('userInput').value.trim().toLowerCase();
+            const consoleEl = document.getElementById('console');
+            const out = document.getElementById('output');
+            
+            if (mode === 'interest' && !input) {
+                alert("Please enter an interest for the AI to analyze.");
+                return;
+            }
+
+            if(activeInterval) clearInterval(activeInterval);
+            out.innerHTML = '';
+            
+            const currentTime = new Date().getHours();
+            const isLate = currentTime > 21 || currentTime < 5;
+            
+            const thoughts = [
+                "> Booting Neural Engine...",
+                `> Local Time Check: ${new Date().toLocaleTimeString()}`,
+                `> Mode: ${mode.toUpperCase()}`,
+                isLate ? "> System Note: Evening detected. Reducing high-impact suggestions." : "> System Note: Peak energy detected.",
+                "> Cross-referencing Activity Database...",
+                "> Finalizing Recommendation..."
+            ];
+
+            for (let t of thoughts) {
+                consoleEl.innerText = t;
+                await new Promise(r => setTimeout(r, 250));
+            }
+            consoleEl.innerText = "";
+
+            if (mode === 'interest') handleInterest(input, out, isLate);
+            else handleDomestic(input, out, isLate);
+        }
+
+        function handleInterest(query, out, isLate) {
+            let title, task, xpValue = 35, color = "var(--neon-cyan)";
+
+            if (query.includes("photo")) {
+                title = "PHOTO QUEST";
+                task = isLate ? "Capture 3 long-exposure or 'Low Light' shots of your room." : "Go outside and click 3 Nature photos focusing on color contrast.";
+            } else if (query.includes("foot") || query.includes("soccer")) {
+                title = "DRILL MODE";
+                task = "Execute 50 touches focusing on ball-speed control and passing accuracy.";
+                xpValue = 45;
+            } else if (query.includes("yoga") || query.includes("fit") || query.includes("exercise")) {
+                return renderVideoCard("BIOLOGICAL UPLINK", "Focus on core stability and movement flow.", "ml6cT4AZdqI", 45, "var(--neon-green)");
+            } else {
+                // If interest isn't specific, grab a random mental/tech task from the database
+                const fallback = taskDatabase[Math.floor(Math.random() * taskDatabase.length)];
+                title = fallback.t;
+                task = fallback.d;
+                color = fallback.c;
+            }
+
+            renderCard(title, task, xpValue, color);
+        }
+
+        function handleDomestic(query, out, isLate) {
+            const roll = Math.random();
+            if (roll > 0.6) { 
+                const challenge = isLate ? "Hold a Plank for 45 seconds." : "Perform 20 explosive Squats.";
+                out.innerHTML = `
+                    <div class="activity-card" style="border-left-color: var(--neon-orange); text-align:center;">
+                        <h2 style="color:var(--neon-orange); margin:0;">BOREDOM OVERRIDE</h2>
+                        <p>${challenge}</p>
+                        <div id="timer" class="timer">00:00</div>
+                        <button class="btn-mix" id="tBtn" style="width:100%" onclick="startT(${isLate ? 45 : 20})">Start Protocol</button>
+                    </div>`;
+            } else {
+                // Check keywords first
+                let selectedTask;
+                if (query.includes("cook")) {
+                    selectedTask = { t: "CULINARY_RESET", d: "Clean every dish and organize your pantry for tomorrow.", c: "var(--neon-magenta)" };
+                } else if (query.includes("read")) {
+                    selectedTask = { t: "DATA_LOG", d: "Read 10 pages and extract 1 key data point.", c: "var(--neon-magenta)" };
+                } else if (query.includes("clean")) {
+                    selectedTask = { t: "STATION_SYNC", d: "Deep-clean your tech workstation (Screen/Mouse/Keyboard).", c: "var(--neon-magenta)" };
+                } else {
+                    // Pull random task from the massive database if no keyword matched
+                    selectedTask = taskDatabase[Math.floor(Math.random() * taskDatabase.length)];
+                }
+                
+                renderCard(selectedTask.t, selectedTask.d, 40, selectedTask.c);
+            }
+        }
+
+        function renderCard(t, d, v, c) {
+            document.getElementById('output').innerHTML = `
+                <div class="activity-card" style="border-left-color: ${c}">
+                    <h2 style="color:${c}; margin:0; font-size:1.1rem;">${t}</h2>
+                    <p style="color:#bbb;">${d}</p>
+                    <button class="btn-cyan" style="border-color:${c}; color:${c}; width:100%" onclick="completeTask(${v}, this)">Mission Logged (+${v} XP)</button>
+                </div>`;
+        }
+
+        function renderVideoCard(t, d, v, xpVal, c) {
+            document.getElementById('output').innerHTML = `
+                <div class="activity-card" style="border-left-color: ${c}">
+                    <h2 style="color:${c}; margin:0; font-size:1.1rem;">${t}</h2>
+                    <p style="color:#bbb;">${d}</p>
+                    <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/${v}" allowfullscreen></iframe></div>
+                    <button class="btn-cyan" style="border-color:${c}; color:${c}; width:100%; margin-top:15px;" onclick="completeTask(${xpVal}, this)">Mission Logged (+${xpVal} XP)</button>
+                </div>`;
+        }
+
+        function startT(s) {
+            const btn = document.getElementById('tBtn');
+            btn.disabled = true;
+            btn.innerText = "PROTOCOL ACTIVE";
+            const d = document.getElementById('timer');
+            activeInterval = setInterval(() => {
+                s--;
+                d.innerText = `00:${s < 10 ? '0' : ''}${s}`;
+                if (s <= 0) {
+                    clearInterval(activeInterval);
+                    d.innerText = "SUCCESS";
+                    d.style.color = "var(--neon-green)";
+                    addXP(50);
+                }
+            }, 1000);
+        }
+
+        function completeTask(val, btn) {
+            btn.disabled = true;
+            btn.innerText = "DATA SYNCED";
+            addXP(val);
+        }
+
+        function addXP(v) {
+            xp += v;
+            if (xp >= 100) {
+                xp = xp - 100;
+                lvl++;
+                alert(`LEVEL UP! You are now Level ${lvl}. Operational capacity expanded.`);
+            }
+            saveAndRefresh();
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('np_xp', xp);
+            localStorage.setItem('np_lvl', lvl);
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('xp-fill').style.width = xp + "%";
+            document.getElementById('xp-val').innerText = xp;
+            document.getElementById('lvl').innerText = lvl;
+        }
+    </script>
+</body>
+</html>
