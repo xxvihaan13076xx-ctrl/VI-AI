@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIA AI — Cure Boredom</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020408;
+    --surface: #080d14;
+    --card: #0b1220;
+    --border: #1a2840;
+    --cyan: #00e5ff;
+    --green: #00ff88;
+    --magenta: #ff00c8;
+    --orange: #ff6d00;
+    --gold: #ffd600;
+    --red: #ff1744;
+    --blue: #2979ff;
+    --purple: #d500f9;
+    --text: #c8d8f0;
+    --muted: #4a6080;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Ambient glows */
+  body::after {
+    content: '';
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,255,0.04) 0%, transparent 70%);
+    top: -200px; left: -200px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== HEADER ===== */
+  .hud-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(2,4,8,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+  }
+
+  .hud-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: 0 0 20px var(--cyan);
+    letter-spacing: 4px;
+    white-space: nowrap;
+  }
+
+  .hud-stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .stat-chip {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    white-space: nowrap;
+  }
+
+  .stat-chip span { color: var(--magenta); font-size: 0.9rem; font-weight: bold; }
+
+  .xp-track {
+    flex: 1; max-width: 200px;
+    height: 6px; background: #0d1a2a;
+    border-radius: 3px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .xp-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    box-shadow: 0 0 10px var(--cyan);
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ===== MAIN ===== */
+  main {
+    position: relative; z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 30px 16px 80px;
+  }
+
+  /* ===== TITLE SECTION ===== */
+  .hero {
+    text-align: center;
+    margin-bottom: 35px;
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--white);
+    text-shadow: 0 0 30px rgba(0,229,255,0.5);
+    letter-spacing: 8px;
+    line-height: 1;
+  }
+
+  .hero-title span { color: var(--cyan); }
+
+  .hero-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 3px;
+    margin-top: 8px;
+  }
+
+  /* ===== QUICK CATEGORY CHIPS ===== */
+  .category-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+
+  .cat-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .cat-chip:hover, .cat-chip.active {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0,229,255,0.2);
+    background: rgba(0,229,255,0.05);
+  }
+
+  .cat-chip[data-cat="football"]:hover, .cat-chip[data-cat="football"].active { border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(0,255,136,0.2); background: rgba(0,255,136,0.05); }
+  .cat-chip[data-cat="cricket"]:hover, .cat-chip[data-cat="cricket"].active { border-color: var(--orange); color: var(--orange); box-shadow: 0 0 10px rgba(255,109,0,0.2); background: rgba(255,109,0,0.05); }
+  .cat-chip[data-cat="cooking"]:hover, .cat-chip[data-cat="cooking"].active { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(255,214,0,0.2); background: rgba(255,214,0,0.05); }
+  .cat-chip[data-cat="exercise"]:hover, .cat-chip[data-cat="exercise"].active { border-color: var(--red); color: var(--red); box-shadow: 0 0 10px rgba(255,23,68,0.2); background: rgba(255,23,68,0.05); }
+  .cat-chip[data-cat="sleep"]:hover, .cat-chip[data-cat="sleep"].active { border-color: var(--purple); color: var(--purple); box-shadow: 0 0 10px rgba(213,0,249,0.2); background: rgba(213,0,249,0.05); }
+  .cat-chip[data-cat="mind"]:hover, .cat-chip[data-cat="mind"].active { border-color: var(--blue); color: var(--blue); box-shadow: 0 0 10px rgba(41,121,255,0.2); background: rgba(41,121,255,0.05); }
+
+  /* ===== SEARCH CARD ===== */
+  .input-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .input-row {
+    position: relative;
+    margin-bottom: 15px;
+  }
+
+  .input-row input {
+    width: 100%;
+    padding: 14px 50px 14px 16px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-row input:focus { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(0,229,255,0.1); }
+  .input-row input::placeholder { color: var(--muted); font-weight: 400; }
+
+  .input-icon {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: 1.1rem; pointer-events: none;
+  }
+
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media(max-width: 380px) { .btn-row { grid-template-columns: 1fr; } }
+
+  .btn {
+    padding: 13px 10px;
+    border-radius: 10px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 2px solid;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .btn-a { border-color: var(--cyan); color: var(--cyan); }
+  .btn-a:hover:not(:disabled) { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
+
+  .btn-b { border-color: var(--orange); color: var(--orange); }
+  .btn-b:hover:not(:disabled) { background: var(--orange); color: #000; box-shadow: 0 0 20px var(--orange); }
+
+  .btn-random {
+    width: 100%; margin-top: 10px;
+    border-color: var(--magenta); color: var(--magenta);
+  }
+  .btn-random:hover:not(:disabled) { background: var(--magenta); color: #000; box-shadow: 0 0 20px var(--magenta); }
+
+  /* ===== CONSOLE ===== */
+  .console {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--cyan);
+    min-height: 1.2rem;
+    margin-bottom: 12px;
+    padding-left: 4px;
+    opacity: 0.7;
+  }
+
+  /* ===== ACTIVITY CARDS ===== */
+  .activity-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    border-left: 5px solid var(--cyan);
+    animation: slideUp 0.4s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    opacity: 0.6;
+  }
+
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .card-desc {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.6;
+    color: #8aa0c0;
+    margin-bottom: 18px;
+  }
+
+  .card-steps {
+    list-style: none;
+    margin-bottom: 18px;
+  }
+
+  .card-steps li {
+    padding: 8px 0;
+    padding-left: 20px;
+    position: relative;
+    color: #8aa0c0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .card-steps li::before {
+    content: '›';
+    position: absolute; left: 0;
+    color: var(--cyan);
+    font-size: 1.2rem;
+    line-height: 1;
+    top: 8px;
+  }
+
+  /* ===== TIMER ===== */
+  .timer-block {
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .timer-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .timer-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--orange);
+    text-shadow: 0 0 30px var(--orange);
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 15px;
+    transition: color 0.3s;
+  }
+
+  .timer-display.done { color: var(--green); text-shadow: 0 0 30px var(--green); }
+
+  .timer-progress {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 15px;
+  }
+
+  .timer-progress-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--orange), var(--red));
+    box-shadow: 0 0 10px var(--orange);
+    transition: width 1s linear;
+  }
+
+  .timer-btn-row { display: flex; gap: 10px; }
+  .timer-btn-row .btn { flex: 1; }
+
+  /* ===== VIDEO ===== */
+  .video-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    background: #000;
+  }
+  .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  /* ===== COMPLETE BTN ===== */
+  .complete-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 2px solid;
+    background: transparent;
+  }
+  .complete-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ===== XP POPUP ===== */
+  .xp-popup {
+    position: fixed;
+    top: 80px; right: 20px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: 0 0 15px var(--gold);
+    letter-spacing: 2px;
+    animation: popUp 1.8s ease-out forwards;
+    z-index: 999;
+    pointer-events: none;
+  }
+  @keyframes popUp {
+    0% { opacity: 0; transform: translateY(0); }
+    20% { opacity: 1; }
+    80% { opacity: 1; transform: translateY(-40px); }
+    100% { opacity: 0; transform: translateY(-60px); }
+  }
+
+  /* ===== LEVEL UP MODAL ===== */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200;
+    animation: fadeIn 0.3s;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-box {
+    text-align: center;
+    padding: 50px 40px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 0 60px rgba(0,229,255,0.2);
+    animation: zoomIn 0.4s cubic-bezier(.4,0,.2,1);
+    max-width: 360px; width: 90%;
+  }
+  @keyframes zoomIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .modal-icon { font-size: 4rem; margin-bottom: 15px; }
+  .modal-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem; font-weight: 900;
+    color: var(--gold); letter-spacing: 4px;
+    text-shadow: 0 0 30px var(--gold);
+    margin-bottom: 8px;
+  }
+  .modal-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 25px; }
+  .modal-close {
+    padding: 12px 30px;
+    border: 2px solid var(--gold); color: var(--gold);
+    background: transparent; border-radius: 8px;
+    font-family: 'Orbitron', monospace; font-size: 0.65rem;
+    letter-spacing: 2px; cursor: pointer; transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--gold); color: #000; }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- HUD BAR -->
+<div class="hud-bar">
+  <div class="hud-logo">VIA AI</div>
+  <div class="hud-stats">
+    <div class="stat-chip">LVL<span id="lvl-display">1</span></div>
+    <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
+    <div class="stat-chip">XP<span id="xp-display">0</span></div>
+  </div>
+</div>
+
+<main>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title"><span>VIA</span> AI</div>
+    <div class="hero-sub">// BOREDOM ELIMINATION SYSTEM v2.0 //</div>
+  </div>
+
+  <!-- CATEGORY CHIPS -->
+  <div class="category-row">
+    <div class="cat-chip" data-cat="football" onclick="quickCat('football')">⚽ Football</div>
+    <div class="cat-chip" data-cat="cricket" onclick="quickCat('cricket')">🏏 Cricket</div>
+    <div class="cat-chip" data-cat="cooking" onclick="quickCat('cooking')">🍳 Cooking</div>
+    <div class="cat-chip" data-cat="exercise" onclick="quickCat('exercise')">💪 Exercise</div>
+    <div class="cat-chip" data-cat="sleep" onclick="quickCat('sleep')">😴 Sleep</div>
+    <div class="cat-chip" data-cat="mind" onclick="quickCat('mind')">🧠 Mind</div>
+    <div class="cat-chip" data-cat="photo" onclick="quickCat('photo')">📸 Photo</div>
+    <div class="cat-chip" data-cat="music" onclick="quickCat('music')">🎵 Music</div>
+    <div class="cat-chip" data-cat="clean" onclick="quickCat('clean')">🧹 Clean</div>
+    <div class="cat-chip" data-cat="tech" onclick="quickCat('tech')">💻 Tech</div>
+  </div>
+
+  <!-- INPUT CARD -->
+  <div class="input-card">
+    <div class="input-row">
+      <input type="text" id="userInput" placeholder="Type anything: football, cooking, sleep, cricket..." autocomplete="off">
+      <span class="input-icon">🔍</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-a" onclick="processInput('interest')">⚡ Get Activity</button>
+      <button class="btn btn-b" onclick="processInput('override')">🎲 Boredom Override</button>
+    </div>
+    <button class="btn btn-random" onclick="processInput('random')">🔀 Random Mission</button>
+  </div>
+
+  <div class="console" id="console"></div>
+  <div id="output"></div>
+</main>
+
+<script>
+// ===================== DATA =====================
+const ACTIVITIES = {
+  football: [
+    {
+      title: "DRIBBLING DRILL",
+      desc: "Set up 5 objects in a line and dribble through them at full speed.",
+      steps: ["Space objects 1 metre apart", "Dribble with both feet alternating", "Increase speed each round", "Track your fastest time"],
+      timer: 180, xp: 50, color: "var(--green)", tag: "FOOTBALL // SKILL DRILL"
+    },
+    {
+      title: "WALL PASS PROTOCOL",
+      desc: "Find a wall. Do 100 controlled passes against it, alternating feet.",
+      steps: ["Stand 2 metres from wall", "Use inside of foot only", "50 right foot, 50 left foot", "Keep ball below knee height"],
+      timer: 300, xp: 55, color: "var(--green)", tag: "FOOTBALL // PASSING"
+    },
+    {
+      title: "PENALTY PRACTICE",
+      desc: "Take 10 penalties. Aim for a different corner each time.",
+      steps: ["Mark a goal on a wall or use a net", "Pick corner before you kick", "Track how many you score", "Retake any that miss badly"],
+      timer: 240, xp: 45, color: "var(--green)", tag: "FOOTBALL // FINISHING"
+    },
+    {
+      title: "FOOTBALL KNOWLEDGE DRILL",
+      desc: "Watch 1 full match highlight reel and analyse 3 tactical patterns you notice.",
+      steps: ["Open YouTube, search 'best goals this week'", "Watch with focus — not for fun", "Write down 3 patterns you observe", "Think about WHY each goal worked"],
+      timer: null, xp: 35, color: "var(--green)", tag: "FOOTBALL // ANALYSIS"
+    },
+    {
+      title: "FITNESS BASE: FOOTBALLER",
+      desc: "Football-specific conditioning circuit to build your engine.",
+      steps: ["Sprint 20m → walk back × 6", "20 jump squats", "1 minute high knees", "30 second rest, repeat 3 times"],
+      timer: 600, xp: 65, color: "var(--green)", tag: "FOOTBALL // CONDITIONING",
+      video: "xsQ1gNFxJnA"
+    }
+  ],
+  cricket: [
+    {
+      title: "BATTING STANCE RESET",
+      desc: "Practice your stance and backlift for 10 minutes in front of a mirror.",
+      steps: ["Stand sideways to mirror", "Check weight is balanced", "Backlift should be towards 2nd slip", "Hold for 30s then repeat"],
+      timer: 600, xp: 40, color: "var(--orange)", tag: "CRICKET // TECHNIQUE"
+    },
+    {
+      title: "SHADOW BATTING",
+      desc: "Play 50 shadow shots — cover drive, pull, sweep — without a ball.",
+      steps: ["10 cover drives, full extension", "10 pull shots, high elbow", "10 sweep shots, bent knee", "10 straight drives, 10 defence shots"],
+      timer: 300, xp: 50, color: "var(--orange)", tag: "CRICKET // BATTING"
+    },
+    {
+      title: "BOWLING ACTION DRILL",
+      desc: "Practice your run-up and bowling action 20 times focusing on seam position.",
+      steps: ["Mark a 5-step run-up", "Bowl at a single stump or target", "Focus on landing seam upright", "Record yourself on phone for review"],
+      timer: 360, xp: 50, color: "var(--orange)", tag: "CRICKET // BOWLING"
+    },
+    {
+      title: "CRICKET STAT STUDY",
+      desc: "Pick one legendary player, research their career stats and playstyle.",
+      steps: ["Choose player: Kohli, Root, Bumrah, Anderson", "Look up their career batting/bowling avg", "Find their signature technique on YouTube", "Write 3 things you can copy"],
+      timer: null, xp: 30, color: "var(--orange)", tag: "CRICKET // STUDY"
+    },
+    {
+      title: "REACTION WALL DRILL",
+      desc: "Throw a ball hard against a wall and catch the rebound — builds reflexes.",
+      steps: ["Stand 1.5 metres from wall", "Throw at different angles each time", "Catch with both hands together first", "Progress to one-handed catches"],
+      timer: 180, xp: 45, color: "var(--orange)", tag: "CRICKET // FIELDING"
+    }
+  ],
+  cooking: [
+    {
+      title: "KNIFE SKILLS PROTOCOL",
+      desc: "Practice the basic chef knife grip. Dice one onion perfectly uniform.",
+      steps: ["Watch a 2-min knife technique video first", "Use the claw grip on the onion", "Aim for 5mm × 5mm uniform dice", "Speed is secondary to precision"],
+      timer: 600, xp: 45, color: "var(--gold)", tag: "COOKING // TECHNIQUE"
+    },
+    {
+      title: "SPICE AUDIT",
+      desc: "Check every spice in your kitchen, smell each one, discard anything older than 1 year.",
+      steps: ["Remove ALL spices from the cabinet", "Smell each — if weak, it is dead", "Check best-before dates", "Reorganize alphabetically or by cuisine"],
+      timer: null, xp: 35, color: "var(--gold)", tag: "COOKING // ORGANIZATION"
+    },
+    {
+      title: "OMELETTE MASTERCLASS",
+      desc: "Make a French omelette — 3 eggs, low heat, constant movement. Perfect it.",
+      steps: ["Crack 3 eggs, season with salt only", "Pan on low heat, butter must not brown", "Constant circular motion with spatula", "Roll and plate — pale yellow, no colour"],
+      timer: 480, xp: 55, color: "var(--gold)", tag: "COOKING // CHALLENGE",
+      video: "qXPhbe0g0Y4"
+    },
+    {
+      title: "SAUCE CONSTRUCTION",
+      desc: "Make a basic tomato sauce from scratch. No jars allowed.",
+      steps: ["Crush 2 garlic cloves in olive oil", "Add tinned tomatoes + pinch of sugar", "Simmer low for 20 minutes", "Season and taste throughout"],
+      timer: 1200, xp: 60, color: "var(--gold)", tag: "COOKING // FUNDAMENTALS"
+    },
+    {
+      title: "FLAVOUR PROFILE STUDY",
+      desc: "Pick 3 ingredients from your fridge and invent a dish using only those.",
+      steps: ["List your 3 ingredients", "Think: what cooking method suits each?", "What flavour does each bring? Salt/acid/fat/heat?", "Cook it. Rate it honestly out of 10."],
+      timer: null, xp: 50, color: "var(--gold)", tag: "COOKING // CREATIVE"
+    }
+  ],
+  exercise: [
+    {
+      title: "PUSH PROTOCOL",
+      desc: "5 sets of push-ups. Max reps each set. Rest 60s between sets.",
+      steps: ["Set 1: max reps standard push-up", "Set 2: max reps wide grip", "Set 3: max reps diamond grip", "Sets 4-5: any style, max out"],
+      timer: 600, xp: 65, color: "var(--red)", tag: "EXERCISE // PUSH",
+      video: "IODxDxX7oi4"
+    },
+    {
+      title: "CORE DESTRUCTION",
+      desc: "A pure core circuit that will humble you in under 10 minutes.",
+      steps: ["Plank: 60 seconds", "Bicycle crunches: 20 reps", "Leg raises: 15 reps", "Repeat circuit 3 times, 30s rest between"],
+      timer: 540, xp: 60, color: "var(--red)", tag: "EXERCISE // CORE"
+    },
+    {
+      title: "LEG DEMOLITION",
+      desc: "Bodyweight leg circuit. No equipment needed.",
+      steps: ["20 squats", "15 lunges each leg", "20 jump squats", "30 calf raises", "Rest 90 seconds, 3 rounds"],
+      timer: 720, xp: 70, color: "var(--red)", tag: "EXERCISE // LEGS",
+      video: "ml6cT4AZdqI"
+    },
+    {
+      title: "HIIT BLAST",
+      desc: "20 minutes of high-intensity intervals to spike your metabolism.",
+      steps: ["30s burpees → 30s rest", "30s mountain climbers → 30s rest", "30s jumping jacks → 30s rest", "Repeat entire circuit for 20 minutes"],
+      timer: 1200, xp: 80, color: "var(--red)", tag: "EXERCISE // CARDIO"
+    },
+    {
+      title: "FLEXIBILITY UNLOCK",
+      desc: "A full body stretching sequence. Holds all 30–45 seconds.",
+      steps: ["Hip flexor stretch both sides", "Hamstring stretch seated", "Chest opener against doorframe", "Shoulder cross-body stretch"],
+      timer: 600, xp: 40, color: "var(--red)", tag: "EXERCISE // MOBILITY",
+      video: "g_tea8ZNk5A"
+    }
+  ],
+  sleep: [
+    {
+      title: "WIND-DOWN PROTOCOL",
+      desc: "Begin your sleep ritual. This sequence signals your brain that the day is over.",
+      steps: ["All screens off or Night Mode ON", "Dim every light source in the room", "Drink a small glass of warm water", "Write 3 things done today in a note"],
+      timer: null, xp: 30, color: "var(--purple)", tag: "SLEEP // WIND-DOWN"
+    },
+    {
+      title: "4-7-8 BREATH SEQUENCE",
+      desc: "The most effective breathing technique for falling asleep faster.",
+      steps: ["Inhale through nose for 4 seconds", "Hold for 7 seconds", "Exhale through mouth for 8 seconds", "Repeat 4 times — do it now"],
+      timer: 240, xp: 35, color: "var(--purple)", tag: "SLEEP // BREATHING"
+    },
+    {
+      title: "ROOM SLEEP AUDIT",
+      desc: "Optimize your room for maximum sleep quality.",
+      steps: ["Block all light sources (phone LEDs too)", "Temperature: 16-19°C is optimal", "Silence or white noise", "Phone on airplane mode + DND"],
+      timer: null, xp: 30, color: "var(--purple)", tag: "SLEEP // ENVIRONMENT"
+    },
+    {
+      title: "BODY SCAN MEDITATION",
+      desc: "A progressive relaxation exercise. Lie down and follow the sequence.",
+      steps: ["Lie flat, eyes closed", "Focus on your feet — release all tension", "Slowly move attention up: legs, hips, stomach", "Continue to chest, arms, face — breathe slowly"],
+      timer: 600, xp: 40, color: "var(--purple)", tag: "SLEEP // MEDITATION",
+      video: "t0kACis_dJE"
+    },
+    {
+      title: "SLEEP HYGIENE RESET",
+      desc: "Correct the habits that are destroying your sleep quality.",
+      steps: ["No caffeine after 2PM — check your intake", "Set a consistent wake-up time for tomorrow", "Put your phone charger across the room", "Write tomorrow's top 3 tasks to clear your mind"],
+      timer: null, xp: 35, color: "var(--purple)", tag: "SLEEP // HABITS"
+    }
+  ],
+  mind: [
+    {
+      title: "DEEP FOCUS BLOCK",
+      desc: "20 minutes of pure focused work. Phone in another room. No exceptions.",
+      steps: ["Write down ONE thing to accomplish", "Set timer for 20 minutes", "Open only what you need", "Start immediately — no adjustments"],
+      timer: 1200, xp: 55, color: "var(--blue)", tag: "MIND // FOCUS"
+    },
+    {
+      title: "KNOWLEDGE ACQUISITION",
+      desc: "Read 10 pages of a non-fiction book. Extract 1 key idea as a note.",
+      steps: ["Physical book preferred over phone", "Read slowly — comprehension over speed", "Highlight or mark anything important", "After 10 pages, write your 1 takeaway"],
+      timer: 900, xp: 45, color: "var(--blue)", tag: "MIND // READING"
+    },
+    {
+      title: "GOAL ENCRYPTION",
+      desc: "Write your top 3 targets for the next 48 hours with specific detail.",
+      steps: ["Be specific: not 'study more' but 'read 20 pages of X book'", "Each goal needs a deadline time", "Order them by importance", "Review every morning for 2 days"],
+      timer: null, xp: 40, color: "var(--blue)", tag: "MIND // PLANNING"
+    },
+    {
+      title: "LANGUAGE DRILL",
+      desc: "Learn 5 words in a new language. Use them in sentences.",
+      steps: ["Open Duolingo or Google Translate", "Pick 5 words in Arabic, French, or Spanish", "Write each in a sentence", "Say them out loud 3 times each"],
+      timer: 600, xp: 40, color: "var(--blue)", tag: "MIND // LEARNING"
+    },
+    {
+      title: "STOIC REFLECTION",
+      desc: "3-minute mental exercise used by Marcus Aurelius every day.",
+      steps: ["Sit still. Close your eyes.", "Think: what went wrong today and WHY?", "Think: what is outside my control right now?", "Let go of one thing you cannot change."],
+      timer: 180, xp: 35, color: "var(--blue)", tag: "MIND // STOICISM"
+    }
+  ],
+  photo: [
+    {
+      title: "RULE OF THIRDS SHOOT",
+      desc: "Take 5 photos placing the subject on a grid line instead of the centre.",
+      steps: ["Enable grid on your phone camera", "Find 5 different subjects", "Subject on the left vertical line", "Check balance — sky vs ground"],
+      timer: null, xp: 40, color: "var(--cyan)", tag: "PHOTOGRAPHY // COMPOSITION"
+    },
+    {
+      title: "GOLDEN HOUR MISSION",
+      desc: "Go outside 30 minutes before sunset. Shoot 10 photos.",
+      steps: ["Check sunset time now", "Find a location with a clear horizon", "Shoot directly into light for silhouettes", "Shoot with light behind you for warm tones"],
+      timer: null, xp: 50, color: "var(--cyan)", tag: "PHOTOGRAPHY // LIGHTING"
+    },
+    {
+      title: "PORTRAIT STUDY",
+      desc: "Take a self-portrait using natural window light only.",
+      steps: ["Sit beside a large window", "Turn all artificial lights off", "Experiment with angle: front, side, backlit", "Take at least 10, pick the best 1"],
+      timer: null, xp: 45, color: "var(--cyan)", tag: "PHOTOGRAPHY // PORTRAIT"
+    }
+  ],
+  music: [
+    {
+      title: "ACTIVE LISTENING SESSION",
+      desc: "Listen to one full album with no distractions. No skipping.",
+      steps: ["Pick an album you've never heard fully", "Use headphones, eyes closed", "Focus on individual instruments", "Write 2 sentences on what you heard"],
+      timer: null, xp: 35, color: "var(--magenta)", tag: "MUSIC // LISTENING"
+    },
+    {
+      title: "RHYTHM TRAINING",
+      desc: "Tap along to 5 different songs to build your internal rhythm.",
+      steps: ["Play a song. Tap on your leg on every beat.", "Speed up — try a fast track 120+ BPM", "Try a slow track 60-80 BPM", "Find tracks in 3/4 time (waltz) — count 1-2-3"],
+      timer: 600, xp: 40, color: "var(--magenta)", tag: "MUSIC // RHYTHM"
+    }
+  ],
+  clean: [
+    {
+      title: "SANCTUM RESET",
+      desc: "Clear everything off your desk. Wipe it down. Replace ONLY what you actually need.",
+      steps: ["Remove everything — put on floor", "Wipe with damp cloth thoroughly", "Only return: laptop, one drink, one pad/pen", "Everything else goes away permanently"],
+      timer: null, xp: 40, color: "var(--cyan)", tag: "CLEAN // WORKSTATION"
+    },
+    {
+      title: "GRID PURGE",
+      desc: "Delete 50 useless photos from your phone gallery right now.",
+      steps: ["Open gallery. Sort by 'oldest' first.", "Delete all duplicates and blurry shots", "Delete anything older than 1 year you don't care about", "Aim: 50 deleted minimum"],
+      timer: null, xp: 35, color: "var(--cyan)", tag: "CLEAN // DIGITAL"
+    }
+  ],
+  tech: [
+    {
+      title: "INBOX ZERO PROTOCOL",
+      desc: "Get your email inbox to zero. Archive or delete everything.",
+      steps: ["Sort by oldest first", "Archive anything older than 30 days you haven't read", "Unsubscribe from 3 newsletters right now", "Respond to anything that needs a reply"],
+      timer: null, xp: 40, color: "var(--purple)", tag: "TECH // DIGITAL HYGIENE"
+    },
+    {
+      title: "SYSTEM OPTIMIZATION",
+      desc: "Speed up your device. 5 quick fixes.",
+      steps: ["Clear browser cache", "Delete 3 apps you haven't opened in a month", "Run OS software update", "Restart your device completely"],
+      timer: null, xp: 35, color: "var(--purple)", tag: "TECH // DEVICE"
+    }
+  ]
+};
+
+const OVERRIDES = [
+  { title: "COLD SHOWER", desc: "Take a 2-minute cold shower. Spike your dopamine and alertness.", timer: 120, xp: 60, color: "var(--cyan)", tag: "OVERRIDE // PHYSICAL" },
+  { title: "PLANK HOLD", desc: "Hold a plank right now until you cannot. No negotiating.", timer: 60, xp: 50, color: "var(--red)", tag: "OVERRIDE // STRENGTH" },
+  { title: "30 PUSHUPS", desc: "Drop and do 30 pushups. Perfect form only.", timer: 90, xp: 55, color: "var(--red)", tag: "OVERRIDE // PUSHUP" },
+  { title: "OUTDOOR WALK", desc: "Go outside and walk for 15 minutes. No phone. Eyes up.", timer: 900, xp: 50, color: "var(--green)", tag: "OVERRIDE // RESET" },
+  { title: "5 MINUTE TIDY", desc: "Set a 5 minute timer and clean as fast as possible.", timer: 300, xp: 45, color: "var(--gold)", tag: "OVERRIDE // DOMESTIC" },
+  { title: "FACE COLD WATER", desc: "Splash cold water on your face. Triggers alertness reflex.", timer: 30, xp: 20, color: "var(--blue)", tag: "OVERRIDE // INSTANT" },
+  { title: "20 SQUATS NOW", desc: "Stand up. 20 deep squats. Drives blood to the brain.", timer: 60, xp: 40, color: "var(--orange)", tag: "OVERRIDE // LEGS" },
+  { title: "HYDRATION CHECK", desc: "Drink 500ml of water immediately. Clean the glass after.", timer: 30, xp: 20, color: "var(--cyan)", tag: "OVERRIDE // HEALTH" },
+];
+
+// ===================== STATE =====================
+let xp = parseInt(localStorage.getItem('via_xp') || '0');
+let lvl = parseInt(localStorage.getItem('via_lvl') || '1');
+let activeTimer = null;
+let timerTotal = 0;
+let timerRemaining = 0;
+
+updateHUD();
+
+// ===================== LOGIC =====================
+function quickCat(cat) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.cat-chip[data-cat="${cat}"]`)?.classList.add('active');
+  document.getElementById('userInput').value = cat;
+  processInput('interest');
+}
+
+async function processInput(mode) {
+  const input = document.getElementById('userInput').value.trim().toLowerCase();
+  const consoleEl = document.getElementById('console');
+  const out = document.getElementById('output');
+
+  if (activeTimer) clearInterval(activeTimer);
+
+  const msgs = [
+    '> Booting neural engine...',
+    `> Mode: ${mode.toUpperCase()}`,
+    '> Cross-referencing activity matrix...',
+    '> Generating mission brief...'
+  ];
+
+  for (let m of msgs) {
+    consoleEl.innerText = m;
+    await delay(200);
+  }
+  consoleEl.innerText = '';
+
+  if (mode === 'random') {
+    const allCats = Object.keys(ACTIVITIES);
+    const randCat = allCats[Math.floor(Math.random() * allCats.length)];
+    const acts = ACTIVITIES[randCat];
+    renderActivity(acts[Math.floor(Math.random() * acts.length)]);
+    return;
+  }
+
+  if (mode === 'override') {
+    const o = OVERRIDES[Math.floor(Math.random() * OVERRIDES.length)];
+    renderActivity(o);
+    return;
+  }
+
+  // interest mode
+  const cat = detectCategory(input);
+  if (cat && ACTIVITIES[cat]) {
+    const acts = ACTIVITIES[cat];
+    renderActivity(acts[Math.floor(Math.random() * acts.length)]);
+  } else {
+    // fallback random
+    const allCats = Object.keys(ACTIVITIES);
+    const randCat = allCats[Math.floor(Math.random() * allCats.length)];
+    const acts = ACTIVITIES[randCat];
+    renderActivity(acts[Math.floor(Math.random() * acts.length)]);
+  }
+}
+
+function detectCategory(input) {
+  if (!input) return null;
+  if (/foot|soccer|goal|dribbl|penalty|striker|midfield/.test(input)) return 'football';
+  if (/cricket|bat|bowl|wicket|run|crease|spin|pace/.test(input)) return 'cricket';
+  if (/cook|food|recipe|kitchen|eat|chef|meal|bake/.test(input)) return 'cooking';
+  if (/exercise|gym|workout|fitness|run|push|pull|squat|hiit|cardio|train/.test(input)) return 'exercise';
+  if (/sleep|rest|relax|tired|nap|wind|bed/.test(input)) return 'sleep';
+  if (/mind|brain|think|read|study|learn|focus|mental|meditat/.test(input)) return 'mind';
+  if (/photo|camera|shoot|lens|pic|selfie/.test(input)) return 'photo';
+  if (/music|song|listen|rhythm|beat|album/.test(input)) return 'music';
+  if (/clean|organiz|tidy|clutter|dust|wipe/.test(input)) return 'clean';
+  if (/tech|digital|phone|computer|app|email|device/.test(input)) return 'tech';
+  return null;
+}
+
+function renderActivity(act) {
+  const out = document.getElementById('output');
+  const c = act.color;
+
+  let stepsHTML = '';
+  if (act.steps) {
+    stepsHTML = `<ul class="card-steps">${act.steps.map(s => `<li>${s}</li>`).join('')}</ul>`;
+  }
+
+  let videoHTML = '';
+  if (act.video) {
+    videoHTML = `<div class="video-wrap"><iframe src="https://www.youtube.com/embed/${act.video}?rel=0" allowfullscreen loading="lazy"></iframe></div>`;
+  }
+
+  let timerHTML = '';
+  if (act.timer) {
+    const mins = Math.floor(act.timer / 60);
+    const secs = act.timer % 60;
+    const display = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+    timerHTML = `
+      <div class="timer-block">
+        <div class="timer-label">MISSION TIMER</div>
+        <div class="timer-display" id="t-display">${display}</div>
+        <div class="timer-progress"><div class="timer-progress-fill" id="t-prog"></div></div>
+        <div class="timer-btn-row">
+          <button class="btn btn-b" id="t-start" onclick="startTimer(${act.timer}, ${act.xp})">▶ Start Timer</button>
+          <button class="btn btn-a" id="t-reset" onclick="resetTimer(${act.timer})">↺ Reset</button>
+        </div>
+      </div>`;
+  }
+
+  out.innerHTML = `
+    <div class="activity-card" style="border-left-color:${c}">
+      <div class="card-tag" style="color:${c}">${act.tag || 'MISSION'}</div>
+      <div class="card-title" style="color:${c}">${act.title}</div>
+      <div class="card-desc">${act.desc}</div>
+      ${stepsHTML}
+      ${videoHTML}
+      ${timerHTML}
+      <button class="complete-btn" style="border-color:${c};color:${c}" onclick="completeTask(${act.xp}, this)">
+        ✓ Mission Complete (+${act.xp} XP)
+      </button>
+    </div>`;
+}
+
+// ===================== TIMER =====================
+function startTimer(total, xpVal) {
+  if (activeTimer) clearInterval(activeTimer);
+  const startBtn = document.getElementById('t-start');
+  startBtn.disabled = true;
+  startBtn.innerText = '⏱ Running...';
+
+  timerTotal = total;
+  timerRemaining = total;
+
+  activeTimer = setInterval(() => {
+    timerRemaining--;
+    const m = Math.floor(timerRemaining / 60);
+    const s = timerRemaining % 60;
+    const disp = document.getElementById('t-display');
+    const prog = document.getElementById('t-prog');
+    if (!disp) { clearInterval(activeTimer); return; }
+
+    disp.innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const pct = (timerRemaining / timerTotal) * 100;
+    prog.style.width = pct + '%';
+
+    if (timerRemaining <= 10) {
+      disp.style.color = 'var(--red)';
+      disp.style.textShadow = '0 0 30px var(--red)';
+    }
+
+    if (timerRemaining <= 0) {
+      clearInterval(activeTimer);
+      disp.innerText = 'DONE';
+      disp.classList.add('done');
+      prog.style.width = '0%';
+      startBtn.innerText = '✓ Complete';
+      addXP(xpVal);
+    }
+  }, 1000);
+}
+
+function resetTimer(total) {
+  if (activeTimer) clearInterval(activeTimer);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  const disp = document.getElementById('t-display');
+  const prog = document.getElementById('t-prog');
+  const startBtn = document.getElementById('t-start');
+  if (disp) {
+    disp.innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    disp.classList.remove('done');
+    disp.style.color = 'var(--orange)';
+    disp.style.textShadow = '0 0 30px var(--orange)';
+  }
+  if (prog) prog.style.width = '100%';
+  if (startBtn) { startBtn.disabled = false; startBtn.innerText = '▶ Start Timer'; }
+}
+
+// ===================== XP =====================
+function completeTask(val, btn) {
+  btn.disabled = true;
+  btn.innerText = '✓ Logged & Synced';
+  addXP(val);
+}
+
+function addXP(val) {
+  xp += val;
+  showXPPopup(val);
+  if (xp >= 100) {
+    xp -= 100;
+    lvl++;
+    showLevelUp(lvl);
+  }
+  localStorage.setItem('via_xp', xp);
+  localStorage.setItem('via_lvl', lvl);
+  updateHUD();
+}
+
+function updateHUD() {
+  document.getElementById('xp-fill').style.width = xp + '%';
+  document.getElementById('xp-display').innerText = xp;
+  document.getElementById('lvl-display').innerText = lvl;
+}
+
+function showXPPopup(val) {
+  const el = document.createElement('div');
+  el.className = 'xp-popup';
+  el.innerText = `+${val} XP`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+function showLevelUp(newLvl) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-icon">⚡</div>
+      <div class="modal-title">LEVEL ${newLvl}</div>
+      <div class="modal-sub">Operative rank upgraded. Capacity expanded.</div>
+      <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">Continue</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
