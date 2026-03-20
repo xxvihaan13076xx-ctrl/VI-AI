@@ -1,0 +1,3477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIA AI — Boredom Eliminated</title>
+<meta name="application-name" content="VIA AI">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VIA AI">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#030507">
+<meta name="description" content="VIA AI — Elite Boredom Elimination System.">
+<meta name="msapplication-TileColor" content="#030507">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23030507'/%3E%3Ctext y='72' x='50' text-anchor='middle' font-size='60' font-family='monospace' font-weight='900' fill='%2300e5ff'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23030507'/%3E%3Ctext y='360' x='256' text-anchor='middle' font-size='320' font-family='monospace' font-weight='900' fill='%2300e5ff'%3EV%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #030507;
+  --surface: #070c12;
+  --card: #0a1018;
+  --card2: #0d1520;
+  --border: #162030;
+  --border2: #1e2f45;
+  --cyan: #00e5ff;
+  --green: #00ff88;
+  --magenta: #ff00c8;
+  --orange: #ff6d00;
+  --gold: #ffd600;
+  --red: #ff1744;
+  --blue: #2979ff;
+  --purple: #d500f9;
+  --pink: #ff4081;
+  --teal: #1de9b6;
+  --text: #b8cce0;
+  --text2: #7a9ab8;
+  --muted: #3a5570;
+  --white: #f0f8ff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* Scanline overlay */
+body::before {
+  content:'';
+  position:fixed;inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,229,255,0.012) 2px, rgba(0,229,255,0.012) 4px);
+  pointer-events:none;z-index:9998;
+}
+
+/* Grid bg */
+.grid-bg {
+  position:fixed;inset:0;z-index:0;
+  background-image: linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px), linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);
+  background-size:50px 50px;
+  animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove { from{background-position:0 0} to{background-position:50px 50px} }
+
+/* Corner glow */
+.glow-tl { position:fixed;top:-150px;left:-150px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,255,0.06) 0%,transparent 70%);pointer-events:none;z-index:0; }
+.glow-br { position:fixed;bottom:-150px;right:-150px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(213,0,249,0.05) 0%,transparent 70%);pointer-events:none;z-index:0; }
+
+/* ===== NAV ===== */
+.nav {
+  position:sticky;top:0;z-index:500;
+  background:rgba(3,5,7,0.97);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 16px;
+  display:flex;align-items:center;gap:0;
+  height:56px;
+}
+
+.nav-logo {
+  font-family:'Orbitron',monospace;
+  font-size:1rem;font-weight:900;
+  color:var(--cyan);
+  text-shadow:0 0 20px var(--cyan);
+  letter-spacing:4px;
+  margin-right:20px;
+  white-space:nowrap;
+}
+
+.nav-tabs {
+  display:flex;gap:2px;flex:1;
+  overflow-x:auto;scrollbar-width:none;
+}
+.nav-tabs::-webkit-scrollbar{display:none;}
+
+.nav-tab {
+  padding:0 14px;height:56px;
+  display:flex;align-items:center;gap:6px;
+  font-family:'Rajdhani',sans-serif;
+  font-size:0.75rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:all 0.2s;
+  white-space:nowrap;
+  background:none;border-top:none;border-left:none;border-right:none;
+}
+.nav-tab:hover{color:var(--text2);}
+.nav-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+.nav-xp {
+  display:flex;align-items:center;gap:10px;
+  margin-left:auto;padding-left:15px;
+  flex-shrink:0;
+}
+
+.lvl-badge {
+  font-family:'Orbitron',monospace;
+  font-size:0.65rem;font-weight:900;
+  color:#000;background:var(--cyan);
+  padding:3px 8px;border-radius:4px;
+  white-space:nowrap;
+}
+
+.xp-mini {
+  display:flex;flex-direction:column;align-items:flex-end;gap:3px;
+}
+.xp-bar-wrap{width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--magenta));transition:width 0.5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px var(--cyan);}
+.xp-label{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);}
+
+/* ===== PAGES ===== */
+.page{display:none;position:relative;z-index:1;max-width:720px;margin:0 auto;padding:24px 16px 80px;}
+.page.active{display:block;}
+
+/* ===== SECTION TITLES ===== */
+.sec-title {
+  font-family:'Orbitron',monospace;
+  font-size:0.7rem;font-weight:700;
+  letter-spacing:4px;color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ===== HERO ===== */
+.hero {
+  text-align:center;
+  padding:30px 0 24px;
+}
+.hero-title {
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1.8rem,6vw,3rem);
+  font-weight:900;
+  color:var(--white);
+  letter-spacing:8px;
+  line-height:1;
+  margin-bottom:6px;
+}
+.hero-title .accent{color:var(--cyan);text-shadow:0 0 30px var(--cyan);}
+.hero-sub{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:3px;}
+
+.field-label {
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.62rem;letter-spacing:2px;
+  color:var(--muted);margin-bottom:6px;
+}
+
+/* ===== CAT CHIPS ===== */
+.cat-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.cat-chip {
+  padding:7px 14px;border-radius:20px;
+  border:1px solid var(--border);background:var(--card);
+  font-family:'Rajdhani',sans-serif;font-size:0.78rem;font-weight:700;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;letter-spacing:1px;
+  text-transform:uppercase;
+}
+.cat-chip:hover,.cat-chip.sel{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,0.06);box-shadow:0 0 10px rgba(0,229,255,0.15);}
+.cat-chip[data-c="football"]:hover,.cat-chip[data-c="football"].sel{border-color:var(--green);color:var(--green);background:rgba(0,255,136,0.06);box-shadow:0 0 10px rgba(0,255,136,0.15);}
+.cat-chip[data-c="cricket"]:hover,.cat-chip[data-c="cricket"].sel{border-color:var(--orange);color:var(--orange);background:rgba(255,109,0,0.06);box-shadow:0 0 10px rgba(255,109,0,0.15);}
+.cat-chip[data-c="cooking"]:hover,.cat-chip[data-c="cooking"].sel{border-color:var(--gold);color:var(--gold);background:rgba(255,214,0,0.06);box-shadow:0 0 10px rgba(255,214,0,0.15);}
+.cat-chip[data-c="exercise"]:hover,.cat-chip[data-c="exercise"].sel{border-color:var(--red);color:var(--red);background:rgba(255,23,68,0.06);box-shadow:0 0 10px rgba(255,23,68,0.15);}
+.cat-chip[data-c="sleep"]:hover,.cat-chip[data-c="sleep"].sel{border-color:var(--purple);color:var(--purple);background:rgba(213,0,249,0.06);box-shadow:0 0 10px rgba(213,0,249,0.15);}
+.cat-chip[data-c="mind"]:hover,.cat-chip[data-c="mind"].sel{border-color:var(--blue);color:var(--blue);background:rgba(41,121,255,0.06);box-shadow:0 0 10px rgba(41,121,255,0.15);}
+
+/* ===== INPUT CARD ===== */
+.input-card {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:20px;margin-bottom:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.input-wrap{position:relative;margin-bottom:14px;}
+.main-input {
+  width:100%;padding:14px 48px 14px 16px;
+  background:rgba(0,0,0,0.5);
+  border:1px solid var(--border);border-radius:10px;
+  color:var(--white);font-family:'Rajdhani',sans-serif;
+  font-size:1rem;font-weight:600;letter-spacing:1px;
+  outline:none;transition:border-color 0.2s;
+}
+.main-input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(0,229,255,0.08);}
+.main-input::placeholder{color:var(--muted);font-weight:400;}
+.input-ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+@media(max-width:380px){.btn-grid{grid-template-columns:1fr;}}
+
+.btn {
+  padding:13px 10px;border-radius:10px;
+  font-family:'Orbitron',monospace;font-size:0.6rem;
+  font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.25s;
+  border:2px solid;background:transparent;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn:disabled{opacity:0.3;cursor:not-allowed;}
+.btn-cyan{border-color:var(--cyan);color:var(--cyan);}
+.btn-cyan:hover:not(:disabled){background:var(--cyan);color:#000;box-shadow:0 0 20px var(--cyan);}
+.btn-orange{border-color:var(--orange);color:var(--orange);}
+.btn-orange:hover:not(:disabled){background:var(--orange);color:#000;box-shadow:0 0 20px var(--orange);}
+.btn-magenta{border-color:var(--magenta);color:var(--magenta);}
+.btn-magenta:hover:not(:disabled){background:var(--magenta);color:#000;box-shadow:0 0 20px var(--magenta);}
+.btn-green{border-color:var(--green);color:var(--green);}
+.btn-green:hover:not(:disabled){background:var(--green);color:#000;box-shadow:0 0 20px var(--green);}
+.btn-purple{border-color:var(--purple);color:var(--purple);}
+.btn-purple:hover:not(:disabled){background:var(--purple);color:#000;box-shadow:0 0 20px var(--purple);}
+.btn-full{width:100%;}
+
+/* ===== AI CARD ===== */
+.ai-card {
+  background: linear-gradient(135deg, rgba(0,229,255,0.05), rgba(213,0,249,0.05));
+  border:1px solid rgba(0,229,255,0.2);
+  border-radius:16px;padding:20px;margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.ai-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--purple));
+}
+.ai-label {
+  font-family:'Share Tech Mono',monospace;font-size:0.62rem;
+  letter-spacing:3px;color:var(--cyan);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.ai-pulse {
+  width:8px;height:8px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan);
+  animation:pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+
+.ai-input {
+  width:100%;padding:12px 14px;
+  background:rgba(0,0,0,0.5);
+  border:1px solid rgba(0,229,255,0.15);border-radius:8px;
+  color:var(--white);font-family:'Rajdhani',sans-serif;
+  font-size:0.95rem;font-weight:600;
+  outline:none;resize:none;height:70px;
+  transition:border-color 0.2s;margin-bottom:12px;
+}
+.ai-input:focus{border-color:var(--cyan);}
+.ai-input::placeholder{color:var(--muted);}
+
+/* ===== CONSOLE ===== */
+.console-out {
+  font-family:'Share Tech Mono',monospace;font-size:0.68rem;
+  color:var(--cyan);min-height:1.2rem;margin-bottom:12px;
+  padding-left:4px;opacity:0.7;
+}
+
+/* ===== ACTIVITY CARD ===== */
+.activity-card {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:24px;
+  border-left:4px solid var(--cyan);
+  animation:fadeUp 0.4s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  margin-bottom:16px;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+.card-tag{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:3px;margin-bottom:6px;opacity:0.6;}
+.card-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;letter-spacing:2px;margin-bottom:10px;}
+.card-desc{font-size:0.98rem;font-weight:600;line-height:1.65;color:var(--text2);margin-bottom:16px;}
+.card-steps{list-style:none;margin-bottom:16px;}
+.card-steps li{padding:7px 0 7px 18px;position:relative;color:var(--text2);font-size:0.92rem;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.04);}
+.card-steps li::before{content:'›';position:absolute;left:0;color:var(--cyan);font-size:1.1rem;top:7px;}
+.card-steps li:last-child{border-bottom:none;}
+
+/* AI response */
+.ai-response-card {
+  background: linear-gradient(135deg, rgba(0,229,255,0.03), rgba(213,0,249,0.03));
+  border:1px solid rgba(0,229,255,0.15);
+  border-radius:16px;padding:24px;
+  border-left:4px solid var(--cyan);
+  animation:fadeUp 0.4s ease;
+  margin-bottom:16px;
+}
+.ai-response-text {
+  font-size:0.95rem;font-weight:600;line-height:1.8;
+  color:var(--text);white-space:pre-wrap;
+}
+.ai-typing {
+  display:inline-block;
+  width:8px;height:16px;
+  background:var(--cyan);
+  animation:blink 0.7s infinite;
+  vertical-align:middle;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* ===== TIMER ===== */
+.timer-block {
+  background:rgba(0,0,0,0.35);border-radius:12px;
+  padding:20px;text-align:center;margin-bottom:14px;
+  border:1px solid rgba(255,255,255,0.05);
+}
+.timer-label{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+.timer-disp {
+  font-family:'Orbitron',monospace;font-size:3.2rem;font-weight:900;
+  color:var(--orange);text-shadow:0 0 30px var(--orange);
+  letter-spacing:4px;line-height:1;margin-bottom:12px;transition:color 0.3s,text-shadow 0.3s;
+}
+.timer-disp.done{color:var(--green);text-shadow:0 0 30px var(--green);}
+.timer-disp.warn{color:var(--red);text-shadow:0 0 30px var(--red);}
+.timer-prog-wrap{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-bottom:14px;}
+.timer-prog{height:100%;width:100%;background:linear-gradient(90deg,var(--orange),var(--red));box-shadow:0 0 10px var(--orange);transition:width 1s linear;}
+.timer-btns{display:flex;gap:10px;}
+.timer-btns .btn{flex:1;}
+
+/* ===== VIDEO ===== */
+.vid-wrap{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:14px;border:1px solid var(--border);background:#000;}
+.vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+
+/* ===== COMPLETE BTN ===== */
+.complete-btn {
+  width:100%;padding:14px;border-radius:10px;
+  font-family:'Orbitron',monospace;font-size:0.6rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;transition:all 0.25s;
+  border:2px solid;background:transparent;
+}
+.complete-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* ===== STATS PAGE ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+@media(max-width:400px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+
+.stat-card {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:16px;text-align:center;
+}
+.stat-num{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;line-height:1;}
+.stat-lbl{font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+
+/* Heatmap */
+.heatmap-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;overflow-x:auto;}
+.heatmap{display:flex;gap:3px;}
+.heatmap-col{display:flex;flex-direction:column;gap:3px;}
+.heatmap-cell {
+  width:12px;height:12px;border-radius:2px;
+  background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.05);
+  transition:background 0.2s;cursor:default;
+}
+.heatmap-cell.l1{background:rgba(0,229,255,0.2);}
+.heatmap-cell.l2{background:rgba(0,229,255,0.45);}
+.heatmap-cell.l3{background:rgba(0,229,255,0.7);}
+.heatmap-cell.l4{background:rgba(0,229,255,0.95);box-shadow:0 0 6px var(--cyan);}
+
+/* Personal records */
+.pr-list{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+.pr-item{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.pr-item:last-child{border-bottom:none;}
+.pr-name{font-weight:700;font-size:0.9rem;}
+.pr-val{font-family:'Orbitron',monospace;font-size:0.85rem;font-weight:700;}
+.pr-input-row{display:flex;gap:8px;padding:12px 16px;}
+.pr-input-row input{flex:1;padding:8px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:0.9rem;font-weight:600;outline:none;}
+.pr-input-row input:focus{border-color:var(--cyan);}
+
+/* Chart bars */
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px;}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height 0.5s cubic-bezier(.4,0,.2,1);min-height:2px;}
+.bar-lbl{font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:var(--muted);letter-spacing:1px;}
+
+/* ===== CHALLENGES PAGE ===== */
+.challenge-card {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:20px;margin-bottom:14px;
+  display:flex;align-items:flex-start;gap:16px;
+  transition:border-color 0.2s;
+}
+.challenge-card:hover{border-color:var(--border2);}
+.challenge-card.active-c{border-color:var(--gold);}
+.challenge-icon{font-size:2rem;line-height:1;flex-shrink:0;}
+.challenge-info{flex:1;}
+.challenge-name{font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;letter-spacing:2px;margin-bottom:4px;}
+.challenge-desc{font-size:0.85rem;font-weight:600;color:var(--text2);margin-bottom:10px;line-height:1.5;}
+.challenge-prog-wrap{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-bottom:6px;}
+.challenge-prog{height:100%;border-radius:2px;transition:width 0.4s ease;}
+.challenge-days{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:2px;}
+.challenge-action{flex-shrink:0;align-self:center;}
+
+/* Daily mission */
+.daily-card {
+  background:linear-gradient(135deg,rgba(255,214,0,0.05),rgba(255,109,0,0.05));
+  border:1px solid rgba(255,214,0,0.25);
+  border-radius:16px;padding:24px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.daily-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--orange));}
+.daily-badge{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:3px;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.daily-countdown{font-family:'Orbitron',monospace;font-size:0.75rem;color:var(--orange);margin-left:auto;}
+
+/* ===== BADGES PAGE ===== */
+.badges-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+@media(max-width:380px){.badges-grid{grid-template-columns:repeat(2,1fr);}}
+
+.badge-card {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:16px;text-align:center;
+  transition:all 0.2s;
+}
+.badge-card.unlocked{border-color:rgba(255,214,0,0.4);box-shadow:0 0 20px rgba(255,214,0,0.1);}
+.badge-card.locked{opacity:0.4;}
+.badge-icon{font-size:2.2rem;margin-bottom:8px;display:block;}
+.badge-name{font-family:'Orbitron',monospace;font-size:0.6rem;font-weight:700;letter-spacing:1px;color:var(--text2);margin-bottom:4px;}
+.badge-desc{font-size:0.72rem;color:var(--muted);line-height:1.4;}
+
+/* ===== SHARE ===== */
+.share-preview {
+  background:linear-gradient(135deg,#0a1018,#0d1c2a);
+  border:1px solid var(--border2);border-radius:16px;
+  padding:28px;margin-bottom:16px;
+  font-family:'Orbitron',monospace;
+  text-align:center;
+}
+.share-watermark{font-size:0.6rem;letter-spacing:4px;color:var(--muted);margin-bottom:16px;}
+.share-mission{font-size:1.1rem;font-weight:700;color:var(--cyan);margin-bottom:8px;text-shadow:0 0 20px var(--cyan);}
+.share-xp{font-size:2.5rem;font-weight:900;color:var(--gold);margin-bottom:8px;}
+.share-copy-btn{width:100%;padding:14px;border-radius:10px;font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:2px;cursor:pointer;border:2px solid var(--cyan);color:var(--cyan);background:transparent;transition:all 0.2s;}
+.share-copy-btn:hover{background:var(--cyan);color:#000;}
+
+/* ===== XP POPUP ===== */
+.xp-popup{position:fixed;top:80px;right:20px;font-family:'Orbitron',monospace;font-size:0.9rem;font-weight:700;color:var(--gold);text-shadow:0 0 15px var(--gold);letter-spacing:2px;animation:popUp 2s ease-out forwards;z-index:999;pointer-events:none;}
+@keyframes popUp{0%{opacity:0;transform:translateY(0);}15%{opacity:1;}80%{opacity:1;transform:translateY(-50px);}100%{opacity:0;transform:translateY(-70px);}}
+
+/* ===== LEVEL MODAL ===== */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal-box{text-align:center;padding:50px 36px;background:var(--card2);border:1px solid var(--border2);border-radius:20px;box-shadow:0 0 80px rgba(0,229,255,0.15);animation:zoomIn 0.4s cubic-bezier(.4,0,.2,1);max-width:340px;width:90%;}
+@keyframes zoomIn{from{transform:scale(0.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-icon{font-size:4rem;margin-bottom:16px;}
+.modal-title{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:var(--gold);letter-spacing:4px;text-shadow:0 0 30px var(--gold);margin-bottom:8px;}
+.modal-sub{color:var(--muted);font-size:0.9rem;margin-bottom:24px;line-height:1.6;}
+.modal-btn{padding:12px 28px;border:2px solid var(--gold);color:var(--gold);background:transparent;border-radius:8px;font-family:'Orbitron',monospace;font-size:0.62rem;letter-spacing:2px;cursor:pointer;transition:all 0.2s;}
+.modal-btn:hover{background:var(--gold);color:#000;}
+
+/* Streak banner */
+.streak-banner{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 20px;background:rgba(255,214,0,0.06);border:1px solid rgba(255,214,0,0.15);border-radius:10px;margin-bottom:16px;}
+.streak-fire{font-size:1.4rem;}
+.streak-txt{font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;color:var(--gold);letter-spacing:2px;}
+
+/* ===== HAMBURGER ===== */
+.ham-line {
+  display:block;width:22px;height:2px;
+  background:var(--cyan);border-radius:2px;
+  transition:all 0.3s;
+  box-shadow:0 0 6px var(--cyan);
+}
+
+/* ===== DRAWER ITEMS ===== */
+.drawer-item {
+  width:100%;padding:13px 20px;
+  display:flex;align-items:center;gap:14px;
+  background:none;border:none;
+  font-family:'Rajdhani',sans-serif;
+  font-size:0.95rem;font-weight:700;
+  letter-spacing:1px;color:var(--text2);
+  cursor:pointer;transition:all 0.2s;
+  text-align:left;border-left:3px solid transparent;
+}
+.drawer-item:hover {
+  background:rgba(0,229,255,0.05);
+  color:var(--white);
+  border-left-color:rgba(0,229,255,0.3);
+}
+.drawer-item.active-drawer {
+  color:var(--cyan);
+  background:rgba(0,229,255,0.07);
+  border-left-color:var(--cyan);
+}
+.drawer-item span { pointer-events:none; }
+
+/* Override nav to be slim */
+.nav {
+  padding:0 12px !important;
+  justify-content:space-between !important;
+}
+.nav-tabs { display:none !important; }
+.xp-mini { display:none !important; }
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="glow-tl"></div>
+<div class="glow-br"></div>
+
+<!-- NAV -->
+<!-- DRAWER OVERLAY -->
+<div id="drawer-overlay" onclick="closeDrawer()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:800;backdrop-filter:blur(4px);transition:opacity 0.3s;"></div>
+
+<!-- SIDE DRAWER -->
+<div id="side-drawer" style="position:fixed;top:0;left:-300px;width:280px;height:100vh;background:#070c12;border-right:1px solid #1e2f45;z-index:900;transition:left 0.35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;">
+  <!-- Drawer Header -->
+  <div style="padding:24px 20px 16px;border-bottom:1px solid #162030;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div style="font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:900;color:#00e5ff;text-shadow:0 0 20px #00e5ff;letter-spacing:4px;">VIA AI</div>
+    <button onclick="closeDrawer()" style="background:none;border:none;color:#3a5570;cursor:pointer;font-size:1.3rem;padding:4px;transition:color 0.2s;" onmouseover="this.style.color='#00e5ff'" onmouseout="this.style.color='#3a5570'">✕</button>
+  </div>
+
+  <!-- XP Block inside drawer -->
+  <div style="padding:16px 20px;border-bottom:1px solid #162030;flex-shrink:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div style="font-family:'Orbitron',monospace;font-size:0.65rem;color:#3a5570;letter-spacing:2px;">OPERATIVE LEVEL</div>
+      <div style="font-family:'Orbitron',monospace;font-size:0.9rem;font-weight:900;color:#00e5ff;">LV <span id="lvl-n">1</span></div>
+    </div>
+    <div style="height:6px;background:#0a1018;border-radius:3px;overflow:hidden;margin-bottom:6px;border:1px solid #162030;">
+      <div id="xp-fill" style="height:100%;background:linear-gradient(90deg,#00e5ff,#d500f9);box-shadow:0 0 8px #00e5ff;transition:width 0.5s;"></div>
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:#3a5570;"><span id="xp-n">0</span>/100 XP</div>
+  </div>
+
+  <!-- Nav Items -->
+  <div style="flex:1;overflow-y:auto;padding:10px 0;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.55rem;letter-spacing:3px;color:#3a5570;padding:10px 20px 6px;">// NAVIGATION</div>
+
+    <button class="drawer-item active-drawer" id="di-home" onclick="showPage('home')">🏠 <span>Home</span></button>
+    <button class="drawer-item" id="di-ai" onclick="showPage('ai')">🤖 <span>AI Coach</span></button>
+    <button class="drawer-item" id="di-challenges" onclick="showPage('challenges')">🏆 <span>Challenges</span></button>
+    <button class="drawer-item" id="di-stats" onclick="showPage('stats')">📊 <span>Stats</span></button>
+    <button class="drawer-item" id="di-badges" onclick="showPage('badges')">🎖 <span>Badges</span></button>
+
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.55rem;letter-spacing:3px;color:#3a5570;padding:16px 20px 6px;">// TOOLS</div>
+
+    <button class="drawer-item" id="di-fitness" onclick="showPage('fitness')">🏋️ <span>Fitness</span></button>
+    <button class="drawer-item" id="di-cooking" onclick="showPage('cooking')">🍳 <span>Kitchen</span></button>
+    <button class="drawer-item" id="di-games" onclick="showPage('games')">🎮 <span>Games</span></button>
+    <button class="drawer-item" id="di-learn" onclick="showPage('learn')">📚 <span>Learn</span></button>
+    <button class="drawer-item" id="di-anime" onclick="showPage('anime')">🎌 <span>Anime Quiz</span></button>
+    <button class="drawer-item" id="di-draw" onclick="showPage('draw')">✏️ <span>Anime Drawing</span></button>
+
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.55rem;letter-spacing:3px;color:#3a5570;padding:16px 20px 6px;">// SETTINGS</div>
+
+    <button class="drawer-item" id="di-themes" onclick="showPage('themes')">🎨 <span>Theme</span></button>
+    <button class="drawer-item" id="di-social" onclick="showPage('social')">📤 <span>Share</span></button>
+    <button class="drawer-item" id="di-saves" onclick="showPage('saves')">💾 <span>Save Data</span></button>
+  </div>
+
+  <!-- Drawer Footer -->
+  <div style="padding:16px 20px;border-top:1px solid #162030;flex-shrink:0;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:#3a5570;letter-spacing:2px;">// BOREDOM ELIMINATED</div>
+  </div>
+</div>
+
+<!-- TOP NAV BAR (slim) -->
+<nav class="nav">
+  <!-- Hamburger -->
+  <button onclick="openDrawer()" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;" aria-label="Menu">
+    <span class="ham-line"></span>
+    <span class="ham-line"></span>
+    <span class="ham-line"></span>
+  </button>
+
+  <!-- Logo -->
+  <div class="nav-logo" style="margin:0 auto;">VIA AI</div>
+
+  <!-- XP right side -->
+  <div class="nav-xp">
+    <div class="lvl-badge">LV<span id="lvl-n2">1</span></div>
+  </div>
+</nav>
+
+<!-- ============ HOME PAGE ============ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-title"><span class="accent">VIA</span> AI</div>
+    <div class="hero-sub">// BOREDOM ELIMINATION SYSTEM v3.0 //</div>
+  </div>
+
+  <!-- Streak -->
+  <div class="streak-banner" id="streak-banner">
+    <span class="streak-fire">🔥</span>
+    <span class="streak-txt" id="streak-txt">0 DAY STREAK</span>
+  </div>
+
+  <!-- Category chips -->
+  <div class="cat-row">
+    <div class="cat-chip" data-c="football" onclick="quickCat('football')">⚽ Football</div>
+    <div class="cat-chip" data-c="cricket" onclick="quickCat('cricket')">🏏 Cricket</div>
+    <div class="cat-chip" data-c="cooking" onclick="quickCat('cooking')">🍳 Cooking</div>
+    <div class="cat-chip" data-c="exercise" onclick="quickCat('exercise')">💪 Exercise</div>
+    <div class="cat-chip" data-c="sleep" onclick="quickCat('sleep')">😴 Sleep</div>
+    <div class="cat-chip" data-c="mind" onclick="quickCat('mind')">🧠 Mind</div>
+    <div class="cat-chip" data-c="photo" onclick="quickCat('photo')">📸 Photo</div>
+    <div class="cat-chip" data-c="music" onclick="quickCat('music')">🎵 Music</div>
+    <div class="cat-chip" data-c="clean" onclick="quickCat('clean')">🧹 Clean</div>
+    <div class="cat-chip" data-c="tech" onclick="quickCat('tech')">💻 Tech</div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-card">
+    <div class="input-wrap">
+      <input class="main-input" id="userInput" placeholder="Type interest: football, cooking, cricket..." autocomplete="off">
+      <span class="input-ico">🔍</span>
+    </div>
+    <div class="btn-grid">
+      <button class="btn btn-cyan" onclick="processInput('interest')">⚡ Get Activity</button>
+      <button class="btn btn-orange" onclick="processInput('override')">🎲 Override</button>
+    </div>
+    <button class="btn btn-magenta btn-full" onclick="processInput('random')">🔀 Random Mission</button>
+  </div>
+
+  <div class="console-out" id="console"></div>
+  <div id="output"></div>
+</div>
+
+<!-- ============ AI COACH PAGE ============ -->
+<div class="page" id="page-ai">
+  <div class="hero">
+    <div class="hero-title" style="font-size:1.8rem">🤖 <span class="accent">AI</span> COACH</div>
+    <div class="hero-sub">// POWERED BY CLAUDE — YOUR PERSONAL OPERATIVE //</div>
+  </div>
+
+  <div class="ai-card">
+    <div class="ai-label"><span class="ai-pulse"></span>CLAUDE AI ENGINE — LIVE</div>
+    <div class="field-label">// ASK ANYTHING — Get custom missions, advice, plans</div>
+    <textarea class="ai-input" id="ai-prompt" placeholder="e.g. I'm 16, love cricket, feel tired today. Give me a 20 min session plan..."></textarea>
+    <div class="btn-grid">
+      <button class="btn btn-cyan" onclick="askClaude('custom')">🤖 Ask Claude</button>
+      <button class="btn btn-green" onclick="askClaude('plan')">📋 Weekly Plan</button>
+    </div>
+  </div>
+
+  <!-- Quick AI prompts -->
+  <div class="sec-title">Quick Prompts</div>
+  <div class="cat-row" style="margin-bottom:16px;">
+    <div class="cat-chip" onclick="quickAI('Give me a 15-min football drill session for an intermediate player')">⚽ Football Drills</div>
+    <div class="cat-chip" onclick="quickAI('Create a cricket batting improvement plan for this week')">🏏 Cricket Plan</div>
+    <div class="cat-chip" onclick="quickAI('I am bored and tired. Give me a low-effort but productive activity')">😴 Tired Mode</div>
+    <div class="cat-chip" onclick="quickAI('Give me a 10-minute morning routine to start my day powerfully')">🌅 Morning Boost</div>
+    <div class="cat-chip" onclick="quickAI('I want to cook something impressive but simple. Guide me step by step.')">🍳 Cook Guide</div>
+    <div class="cat-chip" onclick="quickAI('Analyse my week: I completed 5 missions and earned 200 XP. Give me feedback and next steps.')">📊 Week Review</div>
+  </div>
+
+  <div class="console-out" id="ai-console"></div>
+  <div id="ai-output"></div>
+</div>
+
+<!-- ============ CHALLENGES PAGE ============ -->
+<div class="page" id="page-challenges">
+  <div class="hero">
+    <div class="hero-title" style="font-size:1.8rem">🏆 <span class="accent">CHALLENGES</span></div>
+    <div class="hero-sub">// COMMIT. EXECUTE. DOMINATE. //</div>
+  </div>
+
+  <!-- Daily Mission -->
+  <div class="sec-title">Daily Mission</div>
+  <div class="daily-card" id="daily-card">
+    <div class="daily-badge">
+      <span>⭐ DAILY MISSION</span>
+      <span class="daily-countdown" id="daily-timer">Resets in: --:--:--</span>
+    </div>
+    <div class="card-title" id="daily-title" style="color:var(--gold);font-family:'Orbitron',monospace;font-size:1rem;letter-spacing:2px;margin-bottom:8px;">Loading...</div>
+    <div class="card-desc" id="daily-desc" style="margin-bottom:14px;"></div>
+    <button class="btn btn-full" style="border-color:var(--gold);color:var(--gold);" id="daily-btn" onclick="completeDaily()">⭐ Complete Daily (+75 XP)</button>
+  </div>
+
+  <div class="sec-title">7-Day Chains</div>
+  <div id="challenges-list"></div>
+</div>
+
+<!-- ============ STATS PAGE ============ -->
+<div class="page" id="page-stats">
+  <div class="hero">
+    <div class="hero-title" style="font-size:1.8rem">📊 <span class="accent">STATS</span></div>
+    <div class="hero-sub">// OPERATIONAL DATA OVERVIEW //</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num" style="color:var(--cyan)" id="s-missions">0</div><div class="stat-lbl">MISSIONS</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--gold)" id="s-xp">0</div><div class="stat-lbl">TOTAL XP</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--orange)" id="s-streak">0</div><div class="stat-lbl">STREAK</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green)" id="s-lvl">1</div><div class="stat-lbl">LEVEL</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--magenta)" id="s-daily">0</div><div class="stat-lbl">DAILIES</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--purple)" id="s-badges">0</div><div class="stat-lbl">BADGES</div></div>
+  </div>
+
+  <div class="sec-title">Weekly Activity</div>
+  <div class="chart-wrap">
+    <div class="bar-chart" id="bar-chart"></div>
+  </div>
+
+  <div class="sec-title">30-Day Heatmap</div>
+  <div class="heatmap-wrap">
+    <div class="heatmap" id="heatmap"></div>
+  </div>
+
+  <div class="sec-title">Personal Records</div>
+  <div class="pr-list">
+    <div class="pr-item">
+      <div>
+        <div class="pr-name">🏋️ Max Pushups</div>
+        <div style="font-size:0.75rem;color:var(--muted);">All-time record</div>
+      </div>
+      <div class="pr-val" style="color:var(--red)" id="pr-pushup">—</div>
+    </div>
+    <div class="pr-input-row">
+      <input id="pr-pushup-in" placeholder="Enter record..." type="number">
+      <button class="btn btn-cyan" style="flex-shrink:0;padding:8px 14px;font-size:0.55rem;" onclick="savePR('pushup')">Save</button>
+    </div>
+    <div class="pr-item">
+      <div>
+        <div class="pr-name">⏱️ Longest Plank</div>
+        <div style="font-size:0.75rem;color:var(--muted);">Seconds held</div>
+      </div>
+      <div class="pr-val" style="color:var(--orange)" id="pr-plank">—</div>
+    </div>
+    <div class="pr-input-row">
+      <input id="pr-plank-in" placeholder="Seconds..." type="number">
+      <button class="btn btn-cyan" style="flex-shrink:0;padding:8px 14px;font-size:0.55rem;" onclick="savePR('plank')">Save</button>
+    </div>
+    <div class="pr-item">
+      <div>
+        <div class="pr-name">⚽ Keepy-Ups</div>
+        <div style="font-size:0.75rem;color:var(--muted);">Best in a row</div>
+      </div>
+      <div class="pr-val" style="color:var(--green)" id="pr-keepups">—</div>
+    </div>
+    <div class="pr-input-row">
+      <input id="pr-keepups-in" placeholder="Enter count..." type="number">
+      <button class="btn btn-cyan" style="flex-shrink:0;padding:8px 14px;font-size:0.55rem;" onclick="savePR('keepups')">Save</button>
+    </div>
+    <div class="pr-item">
+      <div>
+        <div class="pr-name">🏏 Runs in a Session</div>
+        <div style="font-size:0.75rem;color:var(--muted);">Practice innings</div>
+      </div>
+      <div class="pr-val" style="color:var(--orange)" id="pr-cricket">—</div>
+    </div>
+    <div class="pr-input-row">
+      <input id="pr-cricket-in" placeholder="Runs scored..." type="number">
+      <button class="btn btn-cyan" style="flex-shrink:0;padding:8px 14px;font-size:0.55rem;" onclick="savePR('cricket')">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BADGES PAGE ============ -->
+<div class="page" id="page-badges">
+  <div class="hero">
+    <div class="hero-title" style="font-size:1.8rem">🎖 <span class="accent">BADGES</span></div>
+    <div class="hero-sub">// ACHIEVEMENTS UNLOCKED BY ACTION //</div>
+  </div>
+  <div class="sec-title">Earned & Locked</div>
+  <div class="badges-grid" id="badges-grid"></div>
+</div>
+
+<!-- ============ SOCIAL PAGE ============ -->
+<div class="page" id="page-social">
+  <div class="hero">
+    <div class="hero-title" style="font-size:1.8rem">📤 <span class="accent">SHARE</span></div>
+    <div class="hero-sub">// BROADCAST YOUR GRIND //</div>
+  </div>
+
+  <div class="sec-title">Mission Card</div>
+  <div class="share-preview" id="share-card">
+    <div class="share-watermark">VIA AI // BOREDOM ELIMINATED</div>
+    <div class="share-mission" id="sh-mission">Complete a mission first</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);margin-bottom:8px;">XP EARNED</div>
+    <div class="share-xp" id="sh-xp">+0</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--muted);">LV<span id="sh-lvl">1</span> OPERATIVE // <span id="sh-streak2">0</span> DAY STREAK</div>
+  </div>
+  <button class="share-copy-btn" onclick="copyShare()">📋 Copy Share Text</button>
+
+  <div class="sec-title" style="margin-top:20px;">Leaderboard This Week</div>
+  <div class="pr-list" id="leaderboard">
+    <div class="pr-item"><div class="pr-name">🥇 You</div><div class="pr-val" style="color:var(--gold)" id="lb-you">0 XP</div></div>
+    <div class="pr-item" style="opacity:0.4"><div class="pr-name">🥈 ???</div><div class="pr-val" style="color:var(--text2)">—</div></div>
+    <div class="pr-item" style="opacity:0.4"><div class="pr-name">🥉 ???</div><div class="pr-val" style="color:var(--text2)">—</div></div>
+  </div>
+</div>
+
+<!-- ============ ANIME QUIZ PAGE ============ -->
+<div class="page" id="page-anime">
+  <div class="hero">
+    <div class="hero-title" style="font-size:1.8rem">🎌 <span class="accent">ANIME</span> QUIZ</div>
+    <div class="hero-sub">// GUESS THE CHARACTER OR LOSE XP //</div>
+  </div>
+
+  <!-- Mode selector -->
+  <div class="glass-panel" style="margin-bottom:16px;" id="anime-setup">
+    <div class="sec-title">Pick Mode</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div class="anime-mode-card" id="mode-random" onclick="selectAnimeMode('random')">
+        <div style="font-size:2rem;margin-bottom:6px;">🎲</div>
+        <div style="font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:2px;color:var(--cyan);">RANDOM</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;font-weight:600;">Any anime</div>
+      </div>
+      <div class="anime-mode-card" id="mode-specific" onclick="selectAnimeMode('specific')">
+        <div style="font-size:2rem;margin-bottom:6px;">📺</div>
+        <div style="font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:2px;color:var(--magenta);">SPECIFIC</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;font-weight:600;">Choose anime</div>
+      </div>
+    </div>
+
+    <!-- Anime selector (shown when specific mode picked) -->
+    <div id="anime-selector" style="display:none;margin-bottom:14px;">
+      <div class="field-label">// CHOOSE ANIME</div>
+      <select class="field-input" id="anime-pick">
+        <option value="naruto">Naruto</option>
+        <option value="onepiece">One Piece</option>
+        <option value="dragonball">Dragon Ball Z</option>
+        <option value="demonslayer">Demon Slayer</option>
+        <option value="aot">Attack on Titan</option>
+        <option value="bleach">Bleach</option>
+        <option value="mha">My Hero Academia</option>
+        <option value="jjk">Jujutsu Kaisen</option>
+        <option value="hxh">Hunter x Hunter</option>
+        <option value="fma">Fullmetal Alchemist</option>
+      </select>
+    </div>
+
+    <button class="btn btn-cyan btn-full" id="start-anime-btn" onclick="startAnimeRound()" disabled>⚡ Draw Character</button>
+  </div>
+
+  <!-- Game area -->
+  <div id="anime-game" style="display:none;">
+    <!-- Stats bar -->
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
+      <div class="glass-panel" style="padding:12px 16px;flex:1;margin-right:8px;text-align:center;margin-bottom:0;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:2px;">SCORE</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:var(--gold);" id="anime-score">0</div>
+      </div>
+      <div class="glass-panel" style="padding:12px 16px;flex:1;margin-left:8px;text-align:center;margin-bottom:0;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:2px;">STREAK</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:var(--orange);" id="anime-streak">0</div>
+      </div>
+    </div>
+
+    <!-- Character card -->
+    <div class="glass-panel" style="text-align:center;margin-bottom:14px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--magenta));"></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:3px;color:var(--muted);margin-bottom:6px;" id="anime-series-hint"></div>
+
+      <!-- Character silhouette/emoji display -->
+      <div id="anime-char-display" style="font-size:7rem;line-height:1;margin:16px 0;filter:drop-shadow(0 0 20px var(--cyan));animation:charPop 0.5s cubic-bezier(.4,0,.2,1);"></div>
+
+      <div style="font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;letter-spacing:3px;color:var(--muted);margin-bottom:4px;">WHO IS THIS?</div>
+      <div style="font-size:0.82rem;color:var(--text2);font-weight:600;" id="anime-clue"></div>
+
+      <!-- Timer bar -->
+      <div style="margin-top:14px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:2px;margin-bottom:6px;">TIME LEFT: <span id="anime-timer-val" style="color:var(--orange)">15</span>s</div>
+        <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">
+          <div id="anime-timer-bar" style="height:100%;width:100%;background:linear-gradient(90deg,var(--orange),var(--red));transition:width 1s linear;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Answer options -->
+    <div id="anime-options" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;"></div>
+
+    <!-- Skip button -->
+    <button class="btn btn-full" style="border-color:var(--red);color:var(--red);opacity:0.7;" onclick="skipAnime()">
+      ⏭ Skip (−50 XP penalty)
+    </button>
+
+    <!-- Result -->
+    <div id="anime-result" style="display:none;margin-top:14px;"></div>
+  </div>
+
+  <!-- High scores -->
+  <div class="glass-panel" style="margin-top:16px;">
+    <div class="sec-title">Best Scores</div>
+    <div class="pr-item">
+      <div class="pr-name">🏆 Best Score</div>
+      <div class="pr-val" style="color:var(--gold);" id="anime-best">0</div>
+    </div>
+    <div class="pr-item">
+      <div class="pr-name">🔥 Best Streak</div>
+      <div class="pr-val" style="color:var(--orange);" id="anime-best-streak">0</div>
+    </div>
+    <div class="pr-item">
+      <div class="pr-name">✅ Total Correct</div>
+      <div class="pr-val" style="color:var(--green);" id="anime-total-correct">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ANIME DRAWING CHALLENGE PAGE ============ -->
+<div class="page" id="page-draw">
+  <div class="hero">
+    <div class="hero-title" style="font-size:1.8rem">✏️ <span class="accent">ANIME</span> DRAW</div>
+    <div class="hero-sub">// DRAW THE CHARACTER OR LOSE XP //</div>
+  </div>
+
+  <!-- Mode selector -->
+  <div class="glass-panel" style="margin-bottom:16px;" id="draw-setup">
+    <div class="sec-title">Pick Mode</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div class="anime-mode-card" id="dmode-random" onclick="selectDrawMode('random')">
+        <div style="font-size:2rem;margin-bottom:6px;">🎲</div>
+        <div style="font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:2px;color:var(--cyan);">RANDOM</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;font-weight:600;">Any anime</div>
+      </div>
+      <div class="anime-mode-card" id="dmode-specific" onclick="selectDrawMode('specific')">
+        <div style="font-size:2rem;margin-bottom:6px;">📺</div>
+        <div style="font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:2px;color:var(--magenta);">SPECIFIC</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;font-weight:600;">Choose anime</div>
+      </div>
+    </div>
+    <div id="draw-anime-selector" style="display:none;margin-bottom:14px;">
+      <div class="field-label">// CHOOSE ANIME</div>
+      <select class="field-input" id="draw-anime-pick">
+        <option value="naruto">Naruto</option>
+        <option value="onepiece">One Piece</option>
+        <option value="dragonball">Dragon Ball Z</option>
+        <option value="demonslayer">Demon Slayer</option>
+        <option value="aot">Attack on Titan</option>
+        <option value="bleach">Bleach</option>
+        <option value="mha">My Hero Academia</option>
+        <option value="jjk">Jujutsu Kaisen</option>
+        <option value="hxh">Hunter x Hunter</option>
+        <option value="fma">Fullmetal Alchemist</option>
+      </select>
+    </div>
+    <!-- Custom Time -->
+    <div style="margin-bottom:14px;">
+      <div class="field-label">// DRAWING TIME</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;" id="time-chips">
+        <div class="time-chip active-time" onclick="setDrawTime(60,this)">1 min</div>
+        <div class="time-chip" onclick="setDrawTime(120,this)">2 min</div>
+        <div class="time-chip" onclick="setDrawTime(180,this)">3 min</div>
+        <div class="time-chip" onclick="setDrawTime(300,this)">5 min</div>
+        <div class="time-chip" onclick="setDrawTime(600,this)">10 min</div>
+        <div class="time-chip" onclick="setDrawTime(0,this)">∞ No limit</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="number" id="custom-time-input" class="field-input" placeholder="Custom seconds e.g. 90" min="10" max="3600" style="flex:1;">
+        <button class="btn btn-cyan" style="flex-shrink:0;padding:11px 14px;font-size:0.55rem;" onclick="applyCustomTime()">Set</button>
+      </div>
+    </div>
+
+    <button class="btn btn-cyan btn-full" id="start-draw-btn" onclick="startDrawRound()" disabled>✏️ Start Drawing Challenge</button>
+  </div>
+
+<style>
+.time-chip {
+  padding:7px 14px;border-radius:20px;
+  border:1px solid var(--border);background:var(--card);
+  font-family:'Rajdhani',sans-serif;font-size:0.8rem;font-weight:700;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;letter-spacing:1px;
+}
+.time-chip:hover,.time-chip.active-time {
+  border-color:var(--cyan);color:var(--cyan);
+  background:rgba(0,229,255,0.07);
+  box-shadow:0 0 10px rgba(0,229,255,0.15);
+}
+</style>
+
+  <!-- Drawing game area -->
+  <div id="draw-game" style="display:none;">
+
+    <!-- Stats -->
+    <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:14px;">
+      <div class="glass-panel" style="padding:12px 16px;flex:1;text-align:center;margin-bottom:0;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:var(--muted);letter-spacing:2px;">SCORE</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:900;color:var(--gold);" id="draw-score">0</div>
+      </div>
+      <div class="glass-panel" style="padding:12px 16px;flex:1;text-align:center;margin-bottom:0;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:var(--muted);letter-spacing:2px;">STREAK</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:900;color:var(--orange);" id="draw-streak">0</div>
+      </div>
+      <div class="glass-panel" style="padding:12px 16px;flex:1;text-align:center;margin-bottom:0;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:var(--muted);letter-spacing:2px;">TIME</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:900;color:var(--red);" id="draw-timer-val">3:00</div>
+      </div>
+    </div>
+
+    <!-- Character to draw -->
+    <div class="glass-panel" style="margin-bottom:14px;text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--magenta),var(--cyan));"></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:3px;color:var(--muted);margin-bottom:6px;" id="draw-series-hint"></div>
+      <div style="font-family:'Orbitron',monospace;font-size:0.65rem;letter-spacing:3px;color:var(--muted);margin-bottom:6px;">DRAW THIS CHARACTER</div>
+      <div style="font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;color:var(--cyan);text-shadow:0 0 20px var(--cyan);letter-spacing:3px;margin-bottom:8px;animation:charPop 0.5s ease;" id="draw-char-name"></div>
+      <div style="font-size:0.82rem;color:var(--text2);font-weight:600;margin-bottom:10px;" id="draw-char-clue"></div>
+
+      <!-- Key features to draw -->
+      <div id="draw-features" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px;"></div>
+
+      <!-- Timer bar -->
+      <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">
+        <div id="draw-timer-bar" style="height:100%;width:100%;background:linear-gradient(90deg,var(--cyan),var(--magenta));transition:width 1s linear;box-shadow:0 0 8px var(--cyan);"></div>
+      </div>
+    </div>
+
+    <!-- Drawing prompt card -->
+    <div class="glass-panel" style="margin-bottom:14px;text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--magenta),var(--cyan));"></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:3px;color:var(--muted);margin-bottom:6px;" id="draw-series-hint"></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:3px;color:var(--muted);margin-bottom:10px;">DRAW THIS CHARACTER IN YOUR BOOK</div>
+
+      <!-- Character name big -->
+      <div style="font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--cyan);text-shadow:0 0 20px var(--cyan);letter-spacing:3px;margin-bottom:10px;animation:charPop 0.5s ease;line-height:1.2;" id="draw-char-name"></div>
+
+      <!-- Emoji -->
+      <div style="font-size:5rem;line-height:1;margin:10px 0;animation:charPop 0.5s ease;" id="draw-char-emoji"></div>
+
+      <div style="font-size:0.85rem;color:var(--text2);font-weight:600;margin-bottom:14px;" id="draw-char-clue"></div>
+
+      <!-- Key features to draw -->
+      <div style="text-align:left;background:rgba(0,0,0,0.3);border-radius:10px;padding:14px;margin-bottom:14px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:2px;color:var(--muted);margin-bottom:10px;">// KEY FEATURES TO DRAW</div>
+        <div id="draw-features" style="display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+
+      <!-- Timer bar -->
+      <div style="margin-bottom:4px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:2px;margin-bottom:6px;">TIME: <span id="draw-timer-val" style="color:var(--orange)">3:00</span></div>
+        <div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;">
+          <div id="draw-timer-bar" style="height:100%;width:100%;background:linear-gradient(90deg,var(--cyan),var(--magenta));transition:width 1s linear;box-shadow:0 0 8px var(--cyan);border-radius:3px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Big confirm area -->
+    <div style="background:rgba(0,255,136,0.04);border:2px dashed rgba(0,255,136,0.3);border-radius:16px;padding:28px;text-align:center;margin-bottom:14px;">
+      <div style="font-size:3rem;margin-bottom:10px;">📖✏️</div>
+      <div style="font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;letter-spacing:2px;color:var(--text2);margin-bottom:6px;">DRAW IN YOUR BOOK</div>
+      <div style="font-size:0.82rem;color:var(--muted);font-weight:600;">When you're done drawing, tap the button below</div>
+    </div>
+
+    <!-- Action buttons -->
+    <button class="btn btn-green btn-full" onclick="confirmDrawing()" style="padding:18px;font-size:0.75rem;margin-bottom:10px;">
+      ✅ I Drew It! Confirm (+XP)
+    </button>
+    <button class="btn btn-cyan btn-full" onclick="nextDrawChar()" style="padding:14px;margin-bottom:10px;">
+      ⏭ Next Character (no penalty)
+    </button>
+    <button class="btn btn-full" style="border-color:var(--red);color:var(--red);opacity:0.8;padding:13px;" onclick="skipDrawing()">
+      🚫 Skip / Give Up (−60 XP)
+    </button>
+
+    <div id="draw-result" style="display:none;margin-top:14px;"></div>
+  </div>
+
+  <!-- High scores -->
+  <div class="glass-panel" style="margin-top:16px;">
+    <div class="sec-title">Drawing Records</div>
+    <div class="pr-item"><div class="pr-name">🏆 Best Score</div><div class="pr-val" style="color:var(--gold);" id="draw-best">0</div></div>
+    <div class="pr-item"><div class="pr-name">🔥 Best Streak</div><div class="pr-val" style="color:var(--orange);" id="draw-best-streak">0</div></div>
+    <div class="pr-item"><div class="pr-name">✅ Total Drawn</div><div class="pr-val" style="color:var(--green);" id="draw-total">0</div></div>
+  </div>
+</div>
+
+<style>
+.color-swatch {
+  width:24px;height:24px;border-radius:50%;
+  cursor:pointer;border:2px solid transparent;
+  transition:all 0.2s;flex-shrink:0;
+}
+.color-swatch:hover,.color-swatch.active-swatch {
+  border-color:var(--white);
+  transform:scale(1.2);
+}
+</style>
+
+<!-- ============ SAVE DATA PAGE ============ -->
+<div class="page" id="page-saves">
+  <div class="hero">
+    <div class="hero-title" style="font-size:1.8rem">💾 <span class="accent">SAVE</span> DATA</div>
+    <div class="hero-sub">// BACKUP & RESTORE YOUR PROGRESS //</div>
+  </div>
+
+  <!-- Current save info -->
+  <div class="glass-panel" style="margin-bottom:16px;">
+    <div class="sec-title">Current Save</div>
+    <div class="pr-item"><div class="pr-name">⚡ Level</div><div class="pr-val" style="color:var(--cyan);" id="sv-lvl">1</div></div>
+    <div class="pr-item"><div class="pr-name">💰 Total XP</div><div class="pr-val" style="color:var(--gold);" id="sv-xp">0</div></div>
+    <div class="pr-item"><div class="pr-name">🎯 Missions</div><div class="pr-val" style="color:var(--green);" id="sv-missions">0</div></div>
+    <div class="pr-item"><div class="pr-name">🔥 Streak</div><div class="pr-val" style="color:var(--orange);" id="sv-streak">0</div></div>
+    <div class="pr-item"><div class="pr-name">🎖 Badges</div><div class="pr-val" style="color:var(--purple);" id="sv-badges">0</div></div>
+    <div class="pr-item" style="border:none;"><div class="pr-name">📅 Last Saved</div><div class="pr-val" style="color:var(--muted);font-size:0.65rem;" id="sv-date">—</div></div>
+  </div>
+
+  <!-- Export -->
+  <div class="glass-panel" style="margin-bottom:16px;">
+    <div class="sec-title">Export Save</div>
+    <p style="font-size:0.88rem;font-weight:600;color:var(--text2);margin-bottom:14px;line-height:1.6;">Download your progress as a file. Keep it safe — you can restore it anytime on any device.</p>
+    <button class="btn btn-cyan btn-full" onclick="exportSave()" style="margin-bottom:10px;">⬇️ Download Save File</button>
+    <button class="btn btn-full" style="border-color:var(--border);color:var(--muted);" onclick="copySaveClipboard()">📋 Copy to Clipboard</button>
+  </div>
+
+  <!-- Import -->
+  <div class="glass-panel" style="margin-bottom:16px;">
+    <div class="sec-title">Import Save</div>
+    <p style="font-size:0.88rem;font-weight:600;color:var(--text2);margin-bottom:14px;line-height:1.6;">Paste your save code or upload a save file to restore progress.</p>
+    <textarea id="import-text" class="field-input" style="height:90px;resize:none;margin-bottom:10px;" placeholder="Paste save code here..."></textarea>
+    <button class="btn btn-green btn-full" onclick="importSave()" style="margin-bottom:10px;">⬆️ Restore Save</button>
+    <div style="text-align:center;font-size:0.75rem;color:var(--muted);margin:8px 0;">— or —</div>
+    <label style="display:block;">
+      <input type="file" id="import-file" accept=".json,.txt" style="display:none;" onchange="importFromFile(this)">
+      <button class="btn btn-purple btn-full" onclick="document.getElementById('import-file').click()">📁 Upload Save File</button>
+    </label>
+  </div>
+
+  <!-- Reset -->
+  <div class="glass-panel" style="border-color:rgba(255,23,68,0.2);">
+    <div class="sec-title" style="color:var(--red);">Danger Zone</div>
+    <p style="font-size:0.88rem;font-weight:600;color:var(--text2);margin-bottom:14px;line-height:1.6;">Reset ALL progress permanently. This cannot be undone. Export first!</p>
+    <button class="btn btn-full" style="border-color:var(--red);color:var(--red);" onclick="confirmReset()">🗑 Reset All Progress</button>
+  </div>
+</div>
+
+<style>
+/* ANIME MODE CARDS */
+.anime-mode-card {
+  background:var(--card2);border:2px solid var(--border);
+  border-radius:12px;padding:20px;text-align:center;
+  cursor:pointer;transition:all 0.2s;
+}
+.anime-mode-card:hover,.anime-mode-card.selected {
+  border-color:var(--cyan);background:rgba(0,229,255,0.05);
+  box-shadow:0 0 20px rgba(0,229,255,0.1);
+}
+.anime-mode-card.selected-magenta {
+  border-color:var(--magenta);background:rgba(255,0,200,0.05);
+  box-shadow:0 0 20px rgba(255,0,200,0.1);
+}
+@keyframes charPop {
+  from{transform:scale(0.5);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+.anime-opt {
+  padding:13px;border-radius:10px;
+  background:var(--card2);border:2px solid var(--border);
+  font-family:'Rajdhani',sans-serif;font-size:0.9rem;
+  font-weight:700;color:var(--text);cursor:pointer;
+  transition:all 0.2s;text-align:left;
+}
+.anime-opt:hover{border-color:var(--cyan);color:var(--cyan);}
+.anime-opt.correct{border-color:var(--green);background:rgba(0,255,136,0.1);color:var(--green);}
+.anime-opt.wrong{border-color:var(--red);background:rgba(255,23,68,0.1);color:var(--red);}
+.anime-opt:disabled{cursor:not-allowed;opacity:0.7;}
+</style>
+
+<!-- Level up modal -->
+<div id="modal" style="display:none;" class="modal-bg" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-icon">⚡</div>
+    <div class="modal-title" id="modal-title">LEVEL 2</div>
+    <div class="modal-sub" id="modal-sub">Operative rank upgraded.</div>
+    <button class="modal-btn" onclick="closeModal()">Continue</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  DATA
+// ============================================================
+const ACTS = {
+  football:[
+    {title:"DRIBBLING DRILL",desc:"Set up 5 objects in a line and dribble through at full speed — both feet.",steps:["Space objects 1m apart","Dribble with feet alternating","Increase speed each run","Track your fastest time"],timer:180,xp:50,color:"var(--green)",tag:"FOOTBALL // SKILL",video:null},
+    {title:"WALL PASS PROTOCOL",desc:"100 controlled passes against a wall. Alternating feet. Keep ball below knee.",steps:["Stand 2m from wall","Inside of foot only","50 right, 50 left","Keep ball low and accurate"],timer:300,xp:55,color:"var(--green)",tag:"FOOTBALL // PASSING"},
+    {title:"PENALTY PRACTICE",desc:"Take 10 penalties, aiming for a different corner each time. Score 8+ to pass.",steps:["Mark a goal or use a net","Pick corner before you kick","Track how many you score","Repeat until 8/10"],timer:240,xp:45,color:"var(--green)",tag:"FOOTBALL // FINISHING"},
+    {title:"FITNESS BASE",desc:"Football conditioning circuit to build your engine and stamina.",steps:["Sprint 20m → walk back × 6","20 jump squats","1 min high knees","30s rest, repeat 3 rounds"],timer:600,xp:65,color:"var(--green)",tag:"FOOTBALL // CONDITIONING",video:"xsQ1gNFxJnA"},
+    {title:"TACTICAL ANALYSIS",desc:"Watch one highlight reel and identify 3 tactical patterns that led to goals.",steps:["Search: 'best goals this week'","Watch analytically — not casually","Write 3 patterns you notice","Think about WHY each worked"],xp:35,color:"var(--green)",tag:"FOOTBALL // IQ"}
+  ],
+  cricket:[
+    {title:"SHADOW BATTING",desc:"Play 50 shadow shots — cover drive, pull, sweep — in front of mirror.",steps:["10 cover drives, full extension","10 pull shots, high elbow","10 sweep shots, bent knee","10 straight drives, 10 defence"],timer:300,xp:50,color:"var(--orange)",tag:"CRICKET // BATTING"},
+    {title:"BOWLING ACTION",desc:"Practice run-up and action 20 times. Focus on seam position and release.",steps:["Mark a 5-step run-up","Bowl at a single stump target","Land seam upright every time","Record on phone and review"],timer:360,xp:50,color:"var(--orange)",tag:"CRICKET // BOWLING"},
+    {title:"REACTION WALL DRILL",desc:"Throw ball at a wall — catch the rebound one-handed. Builds reflexes.",steps:["Stand 1.5m from wall","Throw at different angles","Start two-handed catches","Progress to one-handed"],timer:180,xp:45,color:"var(--orange)",tag:"CRICKET // FIELDING"},
+    {title:"STAT STUDY",desc:"Pick one legendary player. Research their stats and signature technique.",steps:["Choose: Kohli, Root, Bumrah...","Look up career batting/bowling avg","Find technique on YouTube","Write 3 things you can copy"],xp:30,color:"var(--orange)",tag:"CRICKET // STUDY"},
+    {title:"STANCE RESET",desc:"Practice your batting stance and backlift for 10 minutes in the mirror.",steps:["Stand sideways to mirror","Weight balanced, 60/40 back","Backlift towards 2nd slip","Hold 30s, reset, repeat"],timer:600,xp:40,color:"var(--orange)",tag:"CRICKET // TECHNIQUE"}
+  ],
+  cooking:[
+    {title:"OMELETTE MASTERCLASS",desc:"3-egg French omelette. Low heat. Constant movement. Pale yellow. No colour.",steps:["3 eggs cracked, salt only","Low heat — butter must not brown","Constant circular motion","Roll and plate — chef standard"],timer:480,xp:55,color:"var(--gold)",tag:"COOKING // CHALLENGE",video:"qXPhbe0g0Y4"},
+    {title:"KNIFE SKILLS",desc:"Practice the chef knife claw grip. Dice one onion into perfect 5mm cubes.",steps:["2-min knife technique video first","Use the claw grip throughout","Aim for 5mm uniform dice","Speed comes after precision"],timer:600,xp:45,color:"var(--gold)",tag:"COOKING // TECHNIQUE"},
+    {title:"TOMATO SAUCE",desc:"Make a base tomato sauce from scratch. No jars. Simmer low and slow.",steps:["2 garlic cloves in olive oil","Tinned tomatoes + pinch of sugar","Simmer 20 mins on low heat","Season and taste every 5 mins"],timer:1200,xp:60,color:"var(--gold)",tag:"COOKING // FUNDAMENTALS"},
+    {title:"SPICE AUDIT",desc:"Remove every spice. Smell each one. Discard anything dead or old.",steps:["Pull ALL spices out","Smell: if weak, it is dead","Check best-before dates","Reorganise alphabetically"],xp:35,color:"var(--gold)",tag:"COOKING // ORGANISATION"},
+    {title:"CREATIVE COOK",desc:"Pick 3 random fridge items. Invent a dish using only those ingredients.",steps:["List your 3 ingredients","What cooking method suits each?","What flavour does each bring?","Cook it. Rate it out of 10."],xp:50,color:"var(--gold)",tag:"COOKING // CREATIVE"}
+  ],
+  exercise:[
+    {title:"PUSH PROTOCOL",desc:"5 sets of push-ups to failure. Rest 60 seconds between each set.",steps:["Set 1: max reps standard","Set 2: max reps wide grip","Set 3: max reps diamond","Sets 4-5: any style, max out"],timer:600,xp:65,color:"var(--red)",tag:"EXERCISE // PUSH",video:"IODxDxX7oi4"},
+    {title:"CORE DESTRUCTION",desc:"Core circuit that will humble you in under 10 minutes. No mercy.",steps:["Plank: 60 seconds","Bicycle crunches: 20 reps","Leg raises: 15 reps","3 rounds, 30s rest between"],timer:540,xp:60,color:"var(--red)",tag:"EXERCISE // CORE"},
+    {title:"LEG DEMOLITION",desc:"Bodyweight leg circuit. Zero equipment. Maximum burn.",steps:["20 deep squats","15 lunges each leg","20 jump squats explosive","30 calf raises — 3 rounds"],timer:720,xp:70,color:"var(--red)",tag:"EXERCISE // LEGS",video:"ml6cT4AZdqI"},
+    {title:"HIIT BLAST",desc:"20 minutes of high-intensity intervals to destroy calories and fatigue.",steps:["30s burpees → 30s rest","30s mountain climbers → 30s rest","30s jumping jacks → 30s rest","Repeat for 20 full minutes"],timer:1200,xp:80,color:"var(--red)",tag:"EXERCISE // CARDIO"},
+    {title:"FLEXIBILITY UNLOCK",desc:"Full body stretch sequence. Every hold for 30–45 seconds. No rushing.",steps:["Hip flexor stretch both sides","Hamstring stretch seated","Chest opener on doorframe","Shoulder cross-body stretch"],timer:600,xp:40,color:"var(--red)",tag:"EXERCISE // MOBILITY",video:"g_tea8ZNk5A"}
+  ],
+  sleep:[
+    {title:"4-7-8 BREATH",desc:"Most effective breathing technique for falling asleep faster. Do it now.",steps:["Inhale through nose: 4 seconds","Hold breath: 7 seconds","Exhale through mouth: 8 seconds","Repeat 4 times minimum"],timer:240,xp:35,color:"var(--purple)",tag:"SLEEP // BREATHING"},
+    {title:"WIND-DOWN PROTOCOL",desc:"Signal your brain that the day is over. This sequence works.",steps:["All screens off or Night Mode","Dim every light in the room","Small glass of warm water","Write 3 things done today"],xp:30,color:"var(--purple)",tag:"SLEEP // RITUAL"},
+    {title:"ROOM SLEEP AUDIT",desc:"Optimise your room for maximum sleep quality tonight.",steps:["Block all light sources","Target temp: 16–19°C","Silence or white noise on","Phone airplane mode + DND"],xp:30,color:"var(--purple)",tag:"SLEEP // ENVIRONMENT"},
+    {title:"BODY SCAN",desc:"Progressive relaxation. Lie down and release every muscle group.",steps:["Lie flat, eyes closed","Feet first — release all tension","Move up slowly: legs, hips, torso","Continue: chest, arms, face"],timer:600,xp:40,color:"var(--purple)",tag:"SLEEP // MEDITATION",video:"t0kACis_dJE"},
+    {title:"SLEEP HYGIENE RESET",desc:"Fix the habits quietly destroying your sleep quality.",steps:["No caffeine after 2PM — audit now","Set consistent wake-up for tomorrow","Phone charger across the room","Write tomorrow's top 3 tasks"],xp:35,color:"var(--purple)",tag:"SLEEP // HABITS"}
+  ],
+  mind:[
+    {title:"DEEP FOCUS BLOCK",desc:"20 minutes. One task. Phone in another room. No exceptions.",steps:["Write one specific outcome","Set 20-minute timer","Open only what you need","Start in 5 seconds — no more prep"],timer:1200,xp:55,color:"var(--blue)",tag:"MIND // FOCUS"},
+    {title:"KNOWLEDGE DRILL",desc:"Read 10 pages of non-fiction. Extract 1 key idea as a written note.",steps:["Physical book preferred","Read slow: comprehension first","Highlight what matters","After 10 pages: write your takeaway"],timer:900,xp:45,color:"var(--blue)",tag:"MIND // READING"},
+    {title:"GOAL ENCRYPTION",desc:"Write your top 3 targets for next 48 hours with surgical precision.",steps:["Specific, not vague: name the action","Each goal needs a deadline time","Order by importance, not ease","Review every morning for 2 days"],xp:40,color:"var(--blue)",tag:"MIND // PLANNING"},
+    {title:"STOIC REFLECT",desc:"3-minute mental exercise used daily by Marcus Aurelius.",steps:["Sit still. Close your eyes.","What went wrong today and WHY?","What is outside your control now?","Let go of one thing. Breathe."],timer:180,xp:35,color:"var(--blue)",tag:"MIND // STOICISM"},
+    {title:"LANGUAGE DRILL",desc:"Learn 5 new words in a foreign language. Use each in a sentence.",steps:["Open Duolingo or Translate","Pick 5 words: Arabic, French, Spanish","Write each in a full sentence","Say them aloud 3 times each"],timer:600,xp:40,color:"var(--blue)",tag:"MIND // LEARNING"}
+  ],
+  photo:[
+    {title:"RULE OF THIRDS",desc:"Take 5 photos placing the subject on a grid line — never the centre.",steps:["Enable grid on phone camera","Find 5 different subjects","Subject on the left vertical line","Check sky vs ground balance"],xp:40,color:"var(--cyan)",tag:"PHOTOGRAPHY // COMPOSITION"},
+    {title:"PORTRAIT STUDY",desc:"Self-portrait using natural window light only. No artificial lights.",steps:["Sit beside a large window","All artificial lights off","Experiment: front, side, backlit","Shoot 10 — keep the best 1"],xp:45,color:"var(--cyan)",tag:"PHOTOGRAPHY // PORTRAIT"},
+    {title:"MACRO WORLD",desc:"Photograph 5 tiny objects up close. Get within 5cm of each subject.",steps:["Enable portrait/macro mode","Look for texture: wood, fabric, skin","Try different angles per object","Review sharpness on full zoom"],xp:40,color:"var(--cyan)",tag:"PHOTOGRAPHY // MACRO"}
+  ],
+  music:[
+    {title:"ACTIVE LISTEN",desc:"One full album. No distractions. No skipping. Real listening.",steps:["Album you've never heard fully","Headphones, eyes closed","Focus on individual instruments","2 sentences on what you heard"],xp:35,color:"var(--magenta)",tag:"MUSIC // LISTENING"},
+    {title:"RHYTHM TRAIN",desc:"Tap along to 5 different songs. Build your internal timing.",steps:["Play a song. Tap every beat.","Fast track 120+ BPM","Slow track 60-80 BPM","Find 3/4 time (waltz): count 1-2-3"],timer:600,xp:40,color:"var(--magenta)",tag:"MUSIC // RHYTHM"}
+  ],
+  clean:[
+    {title:"SANCTUM RESET",desc:"Clear everything off your desk. Wipe it. Replace ONLY essentials.",steps:["Remove everything onto floor","Wipe with damp cloth fully","Only return: device, one drink, one pen","Everything else goes away"],xp:40,color:"var(--teal)",tag:"CLEAN // WORKSTATION"},
+    {title:"GRID PURGE",desc:"Delete 50 useless photos from your gallery. No mercy.",steps:["Sort by oldest first","Delete all duplicates and blurry","Anything old you don't care about","50 deleted minimum"],xp:35,color:"var(--teal)",tag:"CLEAN // DIGITAL"},
+    {title:"INBOX ZERO",desc:"Archive or delete every unread email older than 14 days.",steps:["Sort by oldest first","Archive unreads 14+ days old","Unsubscribe from 3 newsletters","Reply to anything pending"],xp:40,color:"var(--teal)",tag:"CLEAN // EMAIL"}
+  ],
+  tech:[
+    {title:"SYSTEM OPTIMIZE",desc:"5 quick device speed fixes. Do them all in sequence.",steps:["Clear browser cache","Delete 3 unused apps","Check for OS updates","Full device restart"],xp:35,color:"var(--purple)",tag:"TECH // DEVICE"},
+    {title:"PASSWORD AUDIT",desc:"Update one major password to a high-entropy string today.",steps:["Choose most important account","Generate 16+ character password","Use: upper, lower, numbers, symbols","Save to password manager"],xp:40,color:"var(--purple)",tag:"TECH // SECURITY"}
+  ]
+};
+
+const OVERRIDES = [
+  {title:"COLD SHOWER",desc:"2-minute cold shower. Dopamine spike guaranteed.",timer:120,xp:60,color:"var(--cyan)",tag:"OVERRIDE // PHYSICAL"},
+  {title:"PLANK HOLD",desc:"Hold a plank until you physically cannot. No negotiating.",timer:60,xp:50,color:"var(--red)",tag:"OVERRIDE // STRENGTH"},
+  {title:"30 PUSHUPS",desc:"Drop right now. 30 pushups. Perfect form only.",timer:90,xp:55,color:"var(--red)",tag:"OVERRIDE // PUSH"},
+  {title:"OUTDOOR WALK",desc:"Go outside. Walk for 15 minutes. No phone. Eyes up.",timer:900,xp:50,color:"var(--green)",tag:"OVERRIDE // RESET"},
+  {title:"5 MIN TIDY",desc:"Set a timer. Clean as fast as humanly possible.",timer:300,xp:45,color:"var(--gold)",tag:"OVERRIDE // DOMESTIC"},
+  {title:"20 SQUATS NOW",desc:"Stand up. 20 deep squats. Drives blood to the brain.",timer:60,xp:40,color:"var(--orange)",tag:"OVERRIDE // LEGS"},
+  {title:"500ML WATER",desc:"Drink 500ml of water immediately. Clean the glass after.",timer:30,xp:20,color:"var(--blue)",tag:"OVERRIDE // HEALTH"},
+  {title:"JUMPING JACKS",desc:"30 jumping jacks to spike your heart rate instantly.",timer:45,xp:30,color:"var(--red)",tag:"OVERRIDE // CARDIO"}
+];
+
+const DAILY_POOL = [
+  {title:"DAILY: IRON WILL",desc:"Complete any timed exercise mission today. No excuses."},
+  {title:"DAILY: MIND OVER MATTER",desc:"Read 10 pages of non-fiction. Write one sentence summary."},
+  {title:"DAILY: KITCHEN SHIFT",desc:"Cook one meal completely from scratch. No delivery."},
+  {title:"DAILY: FIELD WORK",desc:"Practice any sport skill for 20 minutes minimum."},
+  {title:"DAILY: DIGITAL DETOX",desc:"Keep your phone in another room for 1 full hour."},
+  {title:"DAILY: DAWN PROTOCOL",desc:"Drink water, stretch 5 minutes, write 3 goals — before anything else."},
+  {title:"DAILY: FOCUS LOCK",desc:"25 minutes of deep, uninterrupted work on your hardest task."}
+];
+
+const CHALLENGES_DATA = [
+  {id:"c1",name:"7-DAY FOOTBALLER",desc:"Complete one football activity every day for 7 days.",icon:"⚽",color:"var(--green)",total:7},
+  {id:"c2",name:"IRON WEEK",desc:"Complete one exercise activity every day for 7 days.",icon:"💪",color:"var(--red)",total:7},
+  {id:"c3",name:"CRICKET ACADEMY",desc:"Complete a cricket drill daily for 7 days straight.",icon:"🏏",color:"var(--orange)",total:7},
+  {id:"c4",name:"CHEF IN TRAINING",desc:"Cook something from scratch every day for 7 days.",icon:"🍳",color:"var(--gold)",total:7},
+  {id:"c5",name:"MIND PALACE",desc:"Complete a mind/focus task daily for 7 days.",icon:"🧠",color:"var(--blue)",total:7},
+  {id:"c6",name:"SLEEP PROTOCOL",desc:"Follow a sleep mission every night for 7 days.",icon:"😴",color:"var(--purple)",total:7}
+];
+
+const BADGES_DATA = [
+  {id:"b_first",icon:"🎯",name:"FIRST BLOOD",desc:"Complete your first mission",req:()=>S.missions>=1},
+  {id:"b_five",icon:"⚡",name:"HIGH VOLTAGE",desc:"Complete 5 missions",req:()=>S.missions>=5},
+  {id:"b_ten",icon:"🔥",name:"ON FIRE",desc:"Complete 10 missions",req:()=>S.missions>=10},
+  {id:"b_twenty",icon:"💎",name:"DIAMOND GRIND",desc:"Complete 20 missions",req:()=>S.missions>=20},
+  {id:"b_fifty",icon:"👑",name:"OPERATIVE ELITE",desc:"Complete 50 missions",req:()=>S.missions>=50},
+  {id:"b_streak3",icon:"📅",name:"CONSISTENT",desc:"3 day streak",req:()=>S.streak>=3},
+  {id:"b_streak7",icon:"🗓️",name:"IRON STREAK",desc:"7 day streak",req:()=>S.streak>=7},
+  {id:"b_lv5",icon:"🚀",name:"LEVEL 5",desc:"Reach Level 5",req:()=>S.lvl>=5},
+  {id:"b_lv10",icon:"🌟",name:"LEVEL 10",desc:"Reach Level 10",req:()=>S.lvl>=10},
+  {id:"b_daily",icon:"⭐",name:"DAILY GRINDER",desc:"Complete a daily mission",req:()=>S.dailies>=1},
+  {id:"b_daily7",icon:"🏆",name:"WEEKLY WARRIOR",desc:"Complete 7 daily missions",req:()=>S.dailies>=7},
+  {id:"b_ai",icon:"🤖",name:"AI USER",desc:"Ask the AI Coach once",req:()=>S.aiAsked>=1},
+  {id:"b_football",icon:"⚽",name:"FOOTBALLER",desc:"Complete 3 football missions",req:()=>S.catCount?.football>=3},
+  {id:"b_cricket",icon:"🏏",name:"CRICKETER",desc:"Complete 3 cricket missions",req:()=>S.catCount?.cricket>=3},
+  {id:"b_cook",icon:"👨‍🍳",name:"CHEF",desc:"Complete 3 cooking missions",req:()=>S.catCount?.cooking>=3},
+  {id:"b_iron",icon:"🏋️",name:"IRON BODY",desc:"Complete 5 exercise missions",req:()=>S.catCount?.exercise>=5},
+  {id:"b_xp500",icon:"💰",name:"XP RICH",desc:"Earn 500 total XP",req:()=>S.totalXP>=500},
+  {id:"b_xp1000",icon:"🏅",name:"XP LEGEND",desc:"Earn 1000 total XP",req:()=>S.totalXP>=1000}
+];
+
+// ============================================================
+//  STATE
+// ============================================================
+let S = {
+  xp:0,lvl:1,totalXP:0,missions:0,streak:0,dailies:0,aiAsked:0,
+  lastDate:'',lastMission:'',lastMissionXP:0,
+  catCount:{},badges:[],challenges:{},weekActivity:[0,0,0,0,0,0,0],
+  heatmap:Array(30).fill(0),pr:{}
+};
+
+function loadState() {
+  const saved = localStorage.getItem('via3_state');
+  if(saved) try{ S = {...S,...JSON.parse(saved)}; }catch(e){}
+  // Ensure arrays/objects exist
+  if(!S.catCount) S.catCount={};
+  if(!S.badges) S.badges=[];
+  if(!S.challenges) S.challenges={};
+  if(!S.weekActivity||S.weekActivity.length!==7) S.weekActivity=[0,0,0,0,0,0,0];
+  if(!S.heatmap||S.heatmap.length!==30) S.heatmap=Array(30).fill(0);
+  if(!S.pr) S.pr={};
+}
+
+function saveState() { localStorage.setItem('via3_state',JSON.stringify(S)); }
+
+// ============================================================
+//  INIT
+// ============================================================
+loadState();
+updateHUD();
+checkStreak();
+renderBadges();
+renderChallenges();
+renderStats();
+renderDaily();
+startDailyCountdown();
+
+// ============================================================
+//  DRAWER
+// ============================================================
+function openDrawer() {
+  document.getElementById('side-drawer').style.left='0';
+  document.getElementById('drawer-overlay').style.display='block';
+  setTimeout(()=>document.getElementById('drawer-overlay').style.opacity='1',10);
+}
+function closeDrawer() {
+  document.getElementById('side-drawer').style.left='-300px';
+  const ov=document.getElementById('drawer-overlay');
+  ov.style.opacity='0';
+  setTimeout(()=>ov.style.display='none',300);
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.drawer-item').forEach(t=>t.classList.remove('active-drawer'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.getElementById('di-'+id)?.classList.add('active-drawer');
+  closeDrawer();
+  if(id==='stats') renderStats();
+  if(id==='badges') renderBadges();
+  if(id==='social') renderShare();
+}
+
+// ============================================================
+//  STREAK
+// ============================================================
+function checkStreak() {
+  const today = new Date().toDateString();
+  if(S.lastDate===today) return;
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  if(S.lastDate!==yesterday && S.lastDate!=='') S.streak=0;
+  saveState();
+  document.getElementById('streak-txt').innerText = S.streak+' DAY STREAK';
+}
+
+function recordToday() {
+  const today = new Date().toDateString();
+  if(S.lastDate===today) return;
+  if(S.lastDate===new Date(Date.now()-86400000).toDateString()) S.streak++;
+  else if(S.lastDate!==today) S.streak = S.streak===0?1:1;
+  S.lastDate=today;
+  const hIdx = S.heatmap.length-1;
+  S.heatmap[hIdx]=Math.min(S.heatmap[hIdx]+1,4);
+  const dayIdx = new Date().getDay();
+  S.weekActivity[dayIdx]=(S.weekActivity[dayIdx]||0)+1;
+  document.getElementById('streak-txt').innerText = S.streak+' DAY STREAK';
+}
+
+// ============================================================
+//  MAIN ACTIVITY
+// ============================================================
+function quickCat(cat) {
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('sel'));
+  document.querySelector(`.cat-chip[data-c="${cat}"]`)?.classList.add('sel');
+  document.getElementById('userInput').value = cat;
+  processInput('interest');
+}
+
+async function processInput(mode) {
+  const input = document.getElementById('userInput').value.trim().toLowerCase();
+  const con = document.getElementById('console');
+  const out = document.getElementById('output');
+  if(activeTimer){ clearInterval(activeTimer); activeTimer=null; }
+
+  const lines = ['>  Booting neural engine...','> Cross-referencing matrix...',`> Mode: ${mode.toUpperCase()}`,'> Generating mission brief...'];
+  for(let l of lines){ con.innerText=l; await delay(180); }
+  con.innerText='';
+
+  let act;
+  if(mode==='random'){
+    const cats=Object.keys(ACTS);
+    const cat=cats[Math.floor(Math.random()*cats.length)];
+    const arr=ACTS[cat];
+    act=arr[Math.floor(Math.random()*arr.length)];
+  } else if(mode==='override'){
+    act=OVERRIDES[Math.floor(Math.random()*OVERRIDES.length)];
+  } else {
+    const cat = detectCat(input);
+    if(cat&&ACTS[cat]){
+      const arr=ACTS[cat];
+      act=arr[Math.floor(Math.random()*arr.length)];
+    } else {
+      const cats=Object.keys(ACTS);
+      const rc=cats[Math.floor(Math.random()*cats.length)];
+      act=ACTS[rc][Math.floor(Math.random()*ACTS[rc].length)];
+    }
+  }
+  renderAct(act, out);
+}
+
+function detectCat(s) {
+  if(!s) return null;
+  if(/foot|soccer|goal|dribbl|penalty|striker|keeper/.test(s)) return 'football';
+  if(/cricket|bat|bowl|wicket|spin|pace|crease/.test(s)) return 'cricket';
+  if(/cook|food|recipe|eat|chef|meal|bake|kitchen/.test(s)) return 'cooking';
+  if(/exercise|gym|workout|fit|push|squat|hiit|run|cardio/.test(s)) return 'exercise';
+  if(/sleep|rest|tired|nap|bed|wind/.test(s)) return 'sleep';
+  if(/mind|brain|read|study|focus|mental|meditat|think/.test(s)) return 'mind';
+  if(/photo|camera|shoot|lens|pic/.test(s)) return 'photo';
+  if(/music|song|listen|rhythm|beat|album/.test(s)) return 'music';
+  if(/clean|organiz|tidy|clutter|dust/.test(s)) return 'clean';
+  if(/tech|phone|computer|app|email|device/.test(s)) return 'tech';
+  return null;
+}
+
+function renderAct(act, container) {
+  const c=act.color;
+  const steps=act.steps?`<ul class="card-steps">${act.steps.map(s=>`<li>${s}</li>`).join('')}</ul>`:'';
+  const video=act.video?`<div class="vid-wrap"><iframe src="https://www.youtube.com/embed/${act.video}?rel=0" allowfullscreen loading="lazy"></iframe></div>`:'';
+  let timerHtml='';
+  if(act.timer){
+    const m=Math.floor(act.timer/60),s=act.timer%60;
+    timerHtml=`
+    <div class="timer-block">
+      <div class="timer-label">// MISSION TIMER</div>
+      <div class="timer-disp" id="t-disp">${pad(m)}:${pad(s)}</div>
+      <div class="timer-prog-wrap"><div class="timer-prog" id="t-prog"></div></div>
+      <div class="timer-btns">
+        <button class="btn btn-orange" id="t-start" onclick="startTimer(${act.timer},${act.xp})">▶ Start</button>
+        <button class="btn btn-cyan" onclick="resetTimer(${act.timer})">↺ Reset</button>
+      </div>
+    </div>`;
+  }
+  container.innerHTML=`
+  <div class="activity-card" style="border-left-color:${c}">
+    <div class="card-tag" style="color:${c}">${act.tag||'MISSION'}</div>
+    <div class="card-title" style="color:${c}">${act.title}</div>
+    <div class="card-desc">${act.desc}</div>
+    ${steps}${video}${timerHtml}
+    <button class="complete-btn" style="border-color:${c};color:${c}" onclick="completeTask(${act.xp},this,'${act.tag?.split(' ')[0]?.toLowerCase()||'misc'}','${act.title}')">
+      ✓ Mission Complete (+${act.xp} XP)
+    </button>
+  </div>`;
+}
+
+// ============================================================
+//  TIMER
+// ============================================================
+let activeTimer=null;
+
+function startTimer(total,xpVal){
+  if(activeTimer) clearInterval(activeTimer);
+  const sb=document.getElementById('t-start');
+  if(sb){ sb.disabled=true; sb.innerText='⏱ Running...'; }
+  let rem=total;
+  activeTimer=setInterval(()=>{
+    rem--;
+    const d=document.getElementById('t-disp'),p=document.getElementById('t-prog');
+    if(!d){ clearInterval(activeTimer); return; }
+    d.innerText=`${pad(Math.floor(rem/60))}:${pad(rem%60)}`;
+    p.style.width=`${(rem/total)*100}%`;
+    if(rem<=10){ d.classList.add('warn'); d.classList.remove('done'); }
+    if(rem<=0){
+      clearInterval(activeTimer); activeTimer=null;
+      d.innerText='DONE ✓'; d.classList.remove('warn'); d.classList.add('done');
+      p.style.width='0%';
+      if(sb){ sb.innerText='✓ Done'; }
+      addXP(xpVal);
+    }
+  },1000);
+}
+
+function resetTimer(total){
+  if(activeTimer){ clearInterval(activeTimer); activeTimer=null; }
+  const d=document.getElementById('t-disp'),p=document.getElementById('t-prog'),sb=document.getElementById('t-start');
+  if(d){ d.innerText=`${pad(Math.floor(total/60))}:${pad(total%60)}`; d.classList.remove('done','warn'); }
+  if(p) p.style.width='100%';
+  if(sb){ sb.disabled=false; sb.innerText='▶ Start'; }
+}
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+// ============================================================
+//  XP & MISSIONS
+// ============================================================
+function completeTask(val,btn,cat,title){
+  btn.disabled=true; btn.innerText='✓ Logged & Synced';
+  S.lastMission=title||'Mission';
+  S.lastMissionXP=val;
+  S.catCount[cat]=(S.catCount[cat]||0)+1;
+  addXP(val);
+  S.missions++;
+  recordToday();
+  checkBadges();
+  saveState();
+  renderShare();
+}
+
+function addXP(v){
+  S.xp+=v; S.totalXP+=v;
+  showXPPop(v);
+  while(S.xp>=100){ S.xp-=100; S.lvl++; showLevelUp(S.lvl); }
+  saveState(); updateHUD();
+}
+
+function updateHUD(){
+  document.getElementById('xp-fill').style.width=S.xp+'%';
+  document.getElementById('xp-n').innerText=S.xp;
+  document.getElementById('lvl-n').innerText=S.lvl;
+  const lvl2=document.getElementById('lvl-n2');
+  if(lvl2) lvl2.innerText=S.lvl;
+}
+
+function showXPPop(v){
+  const el=document.createElement('div');
+  el.className='xp-popup'; el.innerText=`+${v} XP`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2000);
+}
+
+function showLevelUp(lv){
+  const m=document.getElementById('modal');
+  document.getElementById('modal-title').innerText=`LEVEL ${lv}`;
+  document.getElementById('modal-sub').innerText=`Operative rank upgraded. Capacity expanded.${lv>=5?' Elite status achieved.':''}`;
+  m.style.display='flex';
+}
+function closeModal(){ document.getElementById('modal').style.display='none'; }
+
+// ============================================================
+//  AI COACH (Claude API)
+// ============================================================
+async function quickAI(prompt){ document.getElementById('ai-prompt').value=prompt; await askClaude('custom'); }
+
+async function askClaude(mode){
+  const prompt=document.getElementById('ai-prompt').value.trim();
+  const con=document.getElementById('ai-console');
+  const out=document.getElementById('ai-output');
+  if(!prompt&&mode==='custom'){ con.innerText='> Enter a question or request first.'; return; }
+
+  S.aiAsked=(S.aiAsked||0)+1; saveState(); checkBadges();
+
+  const lines=['>  Connecting to Claude AI...','> Transmitting mission brief...','> Neural processing...','> Drafting response...'];
+  for(let l of lines){ con.innerText=l; await delay(220); }
+  con.innerText='';
+
+  const missions=S.missions;
+
+  let finalPrompt='';
+  if(mode==='plan'){
+    finalPrompt=`You are VIA AI, a sharp, motivating activity coach. The operative has completed ${missions} missions. Create a focused 7-day activity plan. Each day should have one main activity and one backup. Be specific, practical, motivating. Format clearly with day headers. Keep it punchy and action-oriented.`;
+  } else {
+    finalPrompt=`You are VIA AI — a direct, sharp, motivating AI activity coach. The operative has completed ${missions} missions. Respond to this request with specific, actionable advice or a mission plan. Be direct and punchy. Use numbered steps when giving instructions. Request: ${prompt}`;
+  }
+
+  out.innerHTML=`<div class="ai-response-card"><div class="ai-label"><span class="ai-pulse"></span>CLAUDE AI RESPONSE</div><div class="ai-response-text" id="ai-text"><span class="ai-typing"></span></div></div>`;
+
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:finalPrompt}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.map(b=>b.text||'').join('')||'No response received.';
+    const el=document.getElementById('ai-text');
+    if(el){
+      el.innerHTML='';
+      // Typewriter effect
+      let i=0;
+      const interval=setInterval(()=>{
+        if(i<text.length){
+          el.innerText=text.slice(0,i+1);
+          i+=3;
+        } else {
+          el.innerText=text;
+          clearInterval(interval);
+          // Add complete button
+          el.insertAdjacentHTML('afterend',`<button class="complete-btn" style="border-color:var(--cyan);color:var(--cyan);margin-top:16px;" onclick="addXP(30);this.disabled=true;this.innerText='✓ Session Logged (+30 XP)'">✓ Log AI Session (+30 XP)</button>`);
+        }
+      },20);
+    }
+  } catch(err){
+    document.getElementById('ai-text').innerText='Connection error. Check network and try again.\n\nError: '+err.message;
+  }
+}
+
+// ============================================================
+//  DAILY MISSION
+// ============================================================
+function renderDaily(){
+  const today=new Date().toDateString();
+  const seed=new Date().getDate()%DAILY_POOL.length;
+  const d=DAILY_POOL[seed];
+  document.getElementById('daily-title').innerText=d.title;
+  document.getElementById('daily-desc').innerText=d.desc;
+
+  const completed=localStorage.getItem('via3_daily')===today;
+  const btn=document.getElementById('daily-btn');
+  if(completed){ btn.disabled=true; btn.innerText='✓ Daily Complete'; }
+}
+
+function completeDaily(){
+  const today=new Date().toDateString();
+  localStorage.setItem('via3_daily',today);
+  S.dailies=(S.dailies||0)+1;
+  addXP(75); S.missions++; recordToday(); checkBadges(); saveState();
+  const btn=document.getElementById('daily-btn');
+  btn.disabled=true; btn.innerText='✓ Daily Complete';
+}
+
+function startDailyCountdown(){
+  setInterval(()=>{
+    const now=new Date();
+    const midnight=new Date(now); midnight.setHours(24,0,0,0);
+    const diff=midnight-now;
+    const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+    document.getElementById('daily-timer').innerText=`Resets: ${pad(h)}:${pad(m)}:${pad(s)}`;
+  },1000);
+}
+
+// ============================================================
+//  CHALLENGES
+// ============================================================
+function renderChallenges(){
+  const el=document.getElementById('challenges-list');
+  el.innerHTML='';
+  CHALLENGES_DATA.forEach(ch=>{
+    const prog=S.challenges[ch.id]||0;
+    const pct=Math.min((prog/ch.total)*100,100);
+    const done=prog>=ch.total;
+    el.insertAdjacentHTML('beforeend',`
+    <div class="challenge-card ${done?'active-c':''}">
+      <div class="challenge-icon">${ch.icon}</div>
+      <div class="challenge-info">
+        <div class="challenge-name" style="color:${ch.color}">${ch.name}</div>
+        <div class="challenge-desc">${ch.desc}</div>
+        <div class="challenge-prog-wrap"><div class="challenge-prog" style="width:${pct}%;background:${ch.color}"></div></div>
+        <div class="challenge-days">${prog}/${ch.total} DAYS ${done?'✓ COMPLETE':''}</div>
+      </div>
+      <div class="challenge-action">
+        <button class="btn ${done?'btn-cyan':'btn-green'}" style="font-size:0.55rem;padding:10px 12px;" onclick="logChallenge('${ch.id}',${ch.xp||50})" ${done?'disabled':''}>
+          ${done?'✓':'+ Log'}
+        </button>
+      </div>
+    </div>`);
+  });
+}
+
+function logChallenge(id,xpVal){
+  S.challenges[id]=(S.challenges[id]||0)+1;
+  addXP(xpVal||50); S.missions++; recordToday(); checkBadges(); saveState();
+  renderChallenges();
+}
+
+// ============================================================
+//  STATS
+// ============================================================
+function renderStats(){
+  document.getElementById('s-missions').innerText=S.missions||0;
+  document.getElementById('s-xp').innerText=S.totalXP||0;
+  document.getElementById('s-streak').innerText=S.streak||0;
+  document.getElementById('s-lvl').innerText=S.lvl||1;
+  document.getElementById('s-daily').innerText=S.dailies||0;
+  document.getElementById('s-badges').innerText=S.badges?.length||0;
+
+  // PR display
+  ['pushup','plank','keepups','cricket'].forEach(k=>{
+    const el=document.getElementById('pr-'+k);
+    if(el) el.innerText=S.pr[k]?S.pr[k]+(k==='plank'?' sec':''):'—';
+  });
+
+  // Bar chart (week)
+  const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const maxV=Math.max(...(S.weekActivity||[1]),1);
+  const chart=document.getElementById('bar-chart');
+  if(chart){
+    chart.innerHTML=days.map((d,i)=>{
+      const v=S.weekActivity?.[i]||0;
+      const h=Math.max((v/maxV)*90,2);
+      const colors=['var(--cyan)','var(--green)','var(--magenta)','var(--gold)','var(--orange)','var(--blue)','var(--purple)'];
+      return `<div class="bar-wrap"><div class="bar" style="height:${h}px;background:${colors[i]};box-shadow:0 0 8px ${colors[i]}"></div><div class="bar-lbl">${d}</div></div>`;
+    }).join('');
+  }
+
+  // Heatmap
+  const hm=document.getElementById('heatmap');
+  if(hm){
+    const weeks=Math.ceil(S.heatmap.length/7);
+    hm.innerHTML='';
+    for(let w=0;w<weeks;w++){
+      const col=document.createElement('div');
+      col.className='heatmap-col';
+      for(let d=0;d<7;d++){
+        const idx=w*7+d;
+        if(idx>=S.heatmap.length) break;
+        const v=S.heatmap[idx]||0;
+        const cell=document.createElement('div');
+        cell.className='heatmap-cell'+(v>0?' l'+Math.min(v,4):'');
+        col.appendChild(cell);
+      }
+      hm.appendChild(col);
+    }
+  }
+}
+
+function savePR(key){
+  const val=parseInt(document.getElementById('pr-'+key+'-in').value);
+  if(isNaN(val)||val<=0) return;
+  if(!S.pr[key]||val>S.pr[key]){
+    S.pr[key]=val;
+    saveState();
+    renderStats();
+    addXP(20);
+    showXPPop(20);
+  }
+  document.getElementById('pr-'+key+'-in').value='';
+}
+
+// ============================================================
+//  BADGES
+// ============================================================
+function checkBadges(){
+  let newBadge=false;
+  BADGES_DATA.forEach(b=>{
+    if(!S.badges.includes(b.id)&&b.req()){
+      S.badges.push(b.id);
+      newBadge=true;
+      showBadgeUnlock(b);
+    }
+  });
+  if(newBadge){ saveState(); renderBadges(); }
+}
+
+function showBadgeUnlock(b){
+  const el=document.createElement('div');
+  el.className='xp-popup';
+  el.style.cssText='color:var(--gold);top:120px;right:20px;font-size:0.75rem;text-align:right;';
+  el.innerText=`🏅 BADGE: ${b.name}`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2500);
+}
+
+function renderBadges(){
+  const grid=document.getElementById('badges-grid');
+  if(!grid) return;
+  grid.innerHTML=BADGES_DATA.map(b=>{
+    const unlocked=S.badges?.includes(b.id);
+    return `<div class="badge-card ${unlocked?'unlocked':'locked'}">
+      <span class="badge-icon">${b.icon}</span>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${b.desc}${unlocked?'<br><span style="color:var(--gold);font-size:0.7rem;">✓ EARNED</span>':''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+//  SHARE
+// ============================================================
+function renderShare(){
+  document.getElementById('sh-mission').innerText=S.lastMission||'Complete a mission first';
+  document.getElementById('sh-xp').innerText=`+${S.lastMissionXP||0}`;
+  document.getElementById('sh-lvl').innerText=S.lvl;
+  document.getElementById('sh-streak2').innerText=S.streak;
+  document.getElementById('lb-you').innerText=`${S.totalXP||0} XP`;
+}
+
+function copyShare(){
+  const text=`🤖 VIA AI — Mission Complete!\n\n⚡ ${S.lastMission||'Mission'} — +${S.lastMissionXP||0} XP\n🏆 Level ${S.lvl} Operative\n🔥 ${S.streak} Day Streak\n💰 ${S.totalXP} Total XP\n\nBoredom: ELIMINATED.`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.querySelector('.share-copy-btn');
+    const orig=btn.innerText;
+    btn.innerText='✓ Copied!';
+    setTimeout(()=>btn.innerText=orig,2000);
+  });
+}
+
+// ============================================================
+//  UTILS
+// ============================================================
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+</script>
+
+<!-- ============ FITNESS PAGE ============ -->
+<div class="page" id="page-fitness">
+  <div class="hero"><div class="hero-title" style="font-size:1.8rem">🏋️ <span class="accent">FITNESS</span></div><div class="hero-sub">// BODY OPTIMIZATION HUB //</div></div>
+
+  <div class="sec-title">Rep Counter</div>
+  <div class="glass-panel" style="text-align:center;margin-bottom:20px;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:3px;color:var(--muted);margin-bottom:10px;">EXERCISE</div>
+    <select id="rep-exercise" class="field-input" style="max-width:280px;margin:0 auto 16px;">
+      <option>Push-ups</option><option>Squats</option><option>Lunges</option><option>Sit-ups</option><option>Burpees</option><option>Pull-ups</option><option>Dips</option><option>Jumping Jacks</option>
+    </select>
+    <div id="rep-count" style="font-family:'Orbitron',monospace;font-size:5rem;font-weight:900;color:var(--cyan);text-shadow:0 0 30px var(--cyan);line-height:1;margin-bottom:16px;">0</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-cyan" style="font-size:1.5rem;padding:20px 40px;border-radius:50%;" onclick="repTap()">TAP</button>
+      <button class="btn btn-orange" onclick="repReset()">↺ Reset</button>
+      <button class="btn btn-green" onclick="repSave()">💾 Save PR</button>
+    </div>
+    <div id="rep-feedback" style="margin-top:12px;font-size:0.85rem;color:var(--muted);font-weight:600;"></div>
+  </div>
+
+  <div class="sec-title">Workout Builder</div>
+  <div class="glass-panel" style="margin-bottom:20px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div>
+        <div class="field-label">// EXERCISE</div>
+        <select id="wb-ex" class="field-input"><option>Push-ups</option><option>Squats</option><option>Lunges</option><option>Plank</option><option>Burpees</option><option>Mountain Climbers</option><option>Jump Squats</option><option>Sit-ups</option><option>Dips</option><option>High Knees</option></select>
+      </div>
+      <div>
+        <div class="field-label">// REPS / SECS</div>
+        <input class="field-input" id="wb-reps" type="number" placeholder="20" min="1">
+      </div>
+    </div>
+    <button class="btn btn-cyan btn-full" onclick="addWorkoutEx()">+ Add Exercise</button>
+    <div id="workout-list" style="margin-top:14px;"></div>
+    <div id="workout-actions" style="display:none;margin-top:12px;display:flex;gap:10px;">
+      <button class="btn btn-green btn-full" onclick="startWorkout()">▶ Start Workout</button>
+      <button class="btn btn-orange" onclick="clearWorkout()">🗑 Clear</button>
+    </div>
+  </div>
+
+  <div class="sec-title">Body Tracker</div>
+  <div class="glass-panel" style="margin-bottom:20px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div><div class="field-label">// WEIGHT (kg)</div><input class="field-input" id="bt-weight" type="number" placeholder="70"></div>
+      <div><div class="field-label">// HEIGHT (cm)</div><input class="field-input" id="bt-height" type="number" placeholder="175"></div>
+    </div>
+    <button class="btn btn-cyan btn-full" onclick="calcBMI()" style="margin-bottom:12px;">Calculate BMI</button>
+    <div id="bmi-result" style="text-align:center;display:none;">
+      <div style="font-family:'Orbitron',monospace;font-size:2.5rem;font-weight:900;" id="bmi-val"></div>
+      <div style="font-size:0.85rem;color:var(--muted);margin-top:4px;" id="bmi-cat"></div>
+    </div>
+  </div>
+
+  <div class="sec-title">Calorie Estimator</div>
+  <div class="glass-panel">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div><div class="field-label">// EXERCISE</div>
+        <select class="field-input" id="cal-ex">
+          <option value="8">Running</option><option value="5">Walking</option><option value="7">Cycling</option><option value="10">HIIT</option><option value="4">Yoga</option><option value="6">Swimming</option><option value="5">Football</option><option value="4">Cricket</option>
+        </select>
+      </div>
+      <div><div class="field-label">// MINUTES</div><input class="field-input" id="cal-mins" type="number" placeholder="30"></div>
+    </div>
+    <button class="btn btn-green btn-full" onclick="calcCalories()">🔥 Estimate Calories</button>
+    <div id="cal-result" style="text-align:center;margin-top:14px;display:none;">
+      <div style="font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--red);" id="cal-val"></div>
+      <div style="font-size:0.8rem;color:var(--muted);">CALORIES BURNED (EST.)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ KITCHEN PAGE ============ -->
+<div class="page" id="page-cooking">
+  <div class="hero"><div class="hero-title" style="font-size:1.8rem">🍳 <span class="accent">KITCHEN</span></div><div class="hero-sub">// CULINARY OPERATIONS HUB //</div></div>
+
+  <div class="sec-title">Recipe Generator</div>
+  <div class="glass-panel" style="margin-bottom:20px;">
+    <div class="field-label">// YOUR INGREDIENTS (comma separated)</div>
+    <input class="field-input" id="ing-input" placeholder="eggs, tomato, cheese, onion..." style="margin-bottom:12px;">
+    <button class="btn btn-cyan btn-full" onclick="generateRecipe()" style="margin-bottom:10px;">🤖 AI Generate Recipe</button>
+    <div id="recipe-output"></div>
+  </div>
+
+  <div class="sec-title">Recipe Scaler</div>
+  <div class="glass-panel" style="margin-bottom:20px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div><div class="field-label">// ORIGINAL SERVINGS</div><input class="field-input" id="scale-from" type="number" placeholder="2"></div>
+      <div><div class="field-label">// TARGET SERVINGS</div><input class="field-input" id="scale-to" type="number" placeholder="4"></div>
+    </div>
+    <div class="field-label">// INGREDIENTS (one per line: "200g flour")</div>
+    <textarea class="field-input" id="scale-ings" placeholder="200g flour&#10;3 eggs&#10;100ml milk" style="height:100px;resize:none;margin-bottom:12px;"></textarea>
+    <button class="btn btn-gold btn-full" onclick="scaleRecipe()">⚖️ Scale Recipe</button>
+    <div id="scale-output" style="margin-top:14px;"></div>
+  </div>
+
+  <div class="sec-title">Meal Planner</div>
+  <div class="glass-panel">
+    <div id="meal-planner"></div>
+    <button class="btn btn-magenta btn-full" onclick="genMealPlan()" style="margin-top:12px;">🤖 AI Generate Week Plan</button>
+    <div id="meal-output" style="margin-top:14px;"></div>
+  </div>
+</div>
+
+<!-- ============ GAMES PAGE ============ -->
+<div class="page" id="page-games">
+  <div class="hero"><div class="hero-title" style="font-size:1.8rem">🎮 <span class="accent">GAMES</span></div><div class="hero-sub">// RECREATIONAL COMBAT ZONE //</div></div>
+
+  <div class="sec-title">Select Game</div>
+  <div class="cat-row" style="margin-bottom:20px;">
+    <div class="cat-chip" onclick="loadGame('typing')">⌨️ Speed Typing</div>
+    <div class="cat-chip" onclick="loadGame('pixel')">🕹️ Pixel Shooter</div>
+    <div class="cat-chip" onclick="loadGame('memory')">🧠 Memory</div>
+    <div class="cat-chip" onclick="loadGame('reaction')">⚡ Reaction</div>
+    <div class="cat-chip" onclick="loadGame('snake')">🐍 Snake</div>
+  </div>
+  <div id="game-container"></div>
+</div>
+
+<!-- ============ LEARN PAGE ============ -->
+<div class="page" id="page-learn">
+  <div class="hero"><div class="hero-title" style="font-size:1.8rem">📚 <span class="accent">LEARN</span></div><div class="hero-sub">// KNOWLEDGE ACQUISITION CENTER //</div></div>
+
+  <div class="sec-title">Select Topic</div>
+  <div class="cat-row" style="margin-bottom:20px;">
+    <div class="cat-chip" onclick="loadLesson('html')">🌐 HTML</div>
+    <div class="cat-chip" onclick="loadLesson('css')">🎨 CSS</div>
+    <div class="cat-chip" onclick="loadLesson('js')">⚡ JavaScript</div>
+    <div class="cat-chip" onclick="loadLesson('python')">🐍 Python</div>
+    <div class="cat-chip" onclick="loadLesson('git')">📦 Git</div>
+    <div class="cat-chip" onclick="loadLesson('math')">➗ Math</div>
+  </div>
+  <div id="learn-container"></div>
+</div>
+
+<!-- ============ THEMES PAGE ============ -->
+<div class="page" id="page-themes">
+  <div class="hero"><div class="hero-title" style="font-size:1.8rem">🎨 <span class="accent">THEMES</span></div><div class="hero-sub">// VISUAL CUSTOMIZATION HUB //</div></div>
+
+  <div class="sec-title">Choose Theme</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+    <div class="theme-card" onclick="applyTheme('cyber')" data-theme="cyber">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#030507,#0d1520);border-color:rgba(0,229,255,0.4);">
+        <span style="color:#00e5ff;font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:900;">CYBER</span>
+      </div>
+      <div class="theme-name">Cyberpunk</div>
+    </div>
+    <div class="theme-card" onclick="applyTheme('military')" data-theme="military">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#0a0f06,#1a2a0f);border-color:rgba(0,255,136,0.4);">
+        <span style="color:#00ff88;font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:900;">MILITARY</span>
+      </div>
+      <div class="theme-name">Military</div>
+    </div>
+    <div class="theme-card" onclick="applyTheme('gold')" data-theme="gold">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#0f0a00,#1a1200);border-color:rgba(255,214,0,0.4);">
+        <span style="color:#ffd600;font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:900;">GOLD</span>
+      </div>
+      <div class="theme-name">Gold Elite</div>
+    </div>
+    <div class="theme-card" onclick="applyTheme('red')" data-theme="red">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#0f0305,#1a0508);border-color:rgba(255,23,68,0.4);">
+        <span style="color:#ff1744;font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:900;">DANGER</span>
+      </div>
+      <div class="theme-name">Danger Zone</div>
+    </div>
+    <div class="theme-card" onclick="applyTheme('purple')" data-theme="purple">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#08030f,#120820);border-color:rgba(213,0,249,0.4);">
+        <span style="color:#d500f9;font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:900;">PHANTOM</span>
+      </div>
+      <div class="theme-name">Phantom</div>
+    </div>
+    <div class="theme-card" onclick="applyTheme('ice')" data-theme="ice">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#030810,#081525);border-color:rgba(41,121,255,0.4);">
+        <span style="color:#2979ff;font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:900;">ICE</span>
+      </div>
+      <div class="theme-name">Ice Blue</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Custom Mission</div>
+  <div class="glass-panel">
+    <div class="field-label">// MISSION TITLE</div>
+    <input class="field-input" id="cm-title" placeholder="e.g. MORNING GRIND" style="margin-bottom:10px;">
+    <div class="field-label">// MISSION DESCRIPTION</div>
+    <textarea class="field-input" id="cm-desc" placeholder="Describe your custom mission..." style="height:80px;resize:none;margin-bottom:10px;"></textarea>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div><div class="field-label">// XP REWARD</div><input class="field-input" id="cm-xp" type="number" placeholder="50" min="1" max="200"></div>
+      <div><div class="field-label">// TIMER (secs, optional)</div><input class="field-input" id="cm-timer" type="number" placeholder="300" min="0"></div>
+    </div>
+    <button class="btn btn-cyan btn-full" onclick="saveCustomMission()">💾 Save Custom Mission</button>
+    <div id="custom-missions-list" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<style>
+.glass-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+.field-input{width:100%;padding:11px 14px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:0.95rem;font-weight:600;outline:none;transition:border-color 0.2s;display:block;}
+.field-input:focus{border-color:var(--cyan);}
+.field-input::placeholder{color:var(--muted);font-weight:400;}
+select.field-input option{background:#0d1520;}
+textarea.field-input{resize:none;}
+.btn-gold{border-color:var(--gold);color:var(--gold);}
+.btn-gold:hover{background:var(--gold);color:#000;}
+.workout-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,0,0,0.3);border-radius:8px;margin-bottom:8px;border:1px solid var(--border);}
+.workout-item-name{font-weight:700;font-size:0.9rem;}
+.workout-item-reps{font-family:'Orbitron',monospace;font-size:0.75rem;color:var(--cyan);}
+.workout-item-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;padding:4px;}
+
+/* THEME CARDS */
+.theme-card{cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid transparent;transition:all 0.2s;}
+.theme-card:hover,.theme-card.active-theme{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,229,255,0.2);}
+.theme-preview{height:80px;display:flex;align-items:center;justify-content:center;border:1px solid;border-radius:10px 10px 0 0;}
+.theme-name{background:var(--card);padding:8px;text-align:center;font-family:'Orbitron',monospace;font-size:0.62rem;letter-spacing:2px;color:var(--muted);}
+
+/* GAMES */
+#game-container canvas{border-radius:12px;display:block;margin:0 auto;max-width:100%;}
+.game-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;}
+.game-score{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;color:var(--gold);text-align:center;margin-bottom:12px;}
+.typing-word{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--cyan);text-align:center;text-shadow:0 0 20px var(--cyan);margin:16px 0;letter-spacing:4px;}
+.typing-input{width:100%;padding:14px;background:rgba(0,0,0,0.5);border:2px solid var(--border);border-radius:10px;color:var(--white);font-family:'Orbitron',monospace;font-size:1rem;text-align:center;outline:none;transition:border-color 0.2s;}
+.typing-input:focus{border-color:var(--cyan);}
+.typing-input.correct{border-color:var(--green);box-shadow:0 0 15px rgba(0,255,136,0.3);}
+.typing-input.wrong{border-color:var(--red);box-shadow:0 0 15px rgba(255,23,68,0.3);}
+
+/* LEARN */
+.lesson-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;}
+.lesson-title{font-family:'Orbitron',monospace;font-size:0.9rem;font-weight:700;letter-spacing:2px;margin-bottom:12px;}
+.code-block{background:#000;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'Share Tech Mono',monospace;font-size:0.82rem;color:var(--green);line-height:1.6;margin:12px 0;overflow-x:auto;white-space:pre;}
+.lesson-text{font-size:0.92rem;font-weight:600;line-height:1.7;color:var(--text2);}
+.quiz-option{width:100%;padding:12px 16px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:left;transition:all 0.2s;}
+.quiz-option:hover{border-color:var(--cyan);color:var(--cyan);}
+.quiz-option.correct{border-color:var(--green);background:rgba(0,255,136,0.1);color:var(--green);}
+.quiz-option.wrong{border-color:var(--red);background:rgba(255,23,68,0.1);color:var(--red);}
+
+/* RECIPE */
+.recipe-out{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:0.88rem;font-weight:600;line-height:1.8;color:var(--text2);white-space:pre-wrap;margin-top:10px;}
+.meal-day{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+.meal-day-name{font-family:'Orbitron',monospace;font-size:0.65rem;letter-spacing:2px;color:var(--gold);margin-bottom:6px;}
+.meal-slot{display:flex;gap:8px;margin-bottom:4px;font-size:0.85rem;font-weight:600;}
+.meal-slot-label{color:var(--muted);min-width:80px;}
+
+/* PIXEL GAME */
+#pixel-canvas{background:#000;border:2px solid var(--cyan);border-radius:8px;}
+</style>
+
+<script>
+// ===================== FITNESS =====================
+let repCount = 0;
+let workoutExercises = [];
+let workoutRunning = false;
+
+function repTap() {
+  repCount++;
+  document.getElementById('rep-count').innerText = repCount;
+  const fb = document.getElementById('rep-feedback');
+  const milestones = {10:'🔥 10 reps!',20:'⚡ 20 reps!',30:'💪 30 reps!',50:'🏆 50 reps! Beast!',100:'👑 100 REPS! LEGEND!'};
+  if(milestones[repCount]) { fb.innerText = milestones[repCount]; addXP(10); }
+}
+function repReset() { repCount = 0; document.getElementById('rep-count').innerText = 0; document.getElementById('rep-feedback').innerText = ''; }
+function repSave() {
+  const ex = document.getElementById('rep-exercise').value;
+  if(!S.pr) S.pr = {};
+  const key = 'rep_' + ex.replace(/\s/g,'_');
+  if(!S.pr[key] || repCount > S.pr[key]) {
+    S.pr[key] = repCount;
+    saveState();
+    showXPPop(25);
+    addXP(25);
+    document.getElementById('rep-feedback').innerText = `🏅 New PR saved: ${repCount} ${ex}!`;
+  } else {
+    document.getElementById('rep-feedback').innerText = `PR is ${S.pr[key]}. Keep pushing!`;
+  }
+}
+
+function addWorkoutEx() {
+  const ex = document.getElementById('wb-ex').value;
+  const reps = document.getElementById('wb-reps').value || '20';
+  workoutExercises.push({ex, reps});
+  renderWorkoutList();
+  document.getElementById('workout-actions').style.display = 'flex';
+}
+function renderWorkoutList() {
+  const el = document.getElementById('workout-list');
+  if(!workoutExercises.length) { el.innerHTML=''; document.getElementById('workout-actions').style.display='none'; return; }
+  el.innerHTML = workoutExercises.map((w,i) => `
+    <div class="workout-item">
+      <div>
+        <div class="workout-item-name">${w.ex}</div>
+        <div class="workout-item-reps">${w.reps} reps/secs</div>
+      </div>
+      <button class="workout-item-del" onclick="removeWorkoutEx(${i})">✕</button>
+    </div>`).join('');
+}
+function removeWorkoutEx(i) { workoutExercises.splice(i,1); renderWorkoutList(); }
+function clearWorkout() { workoutExercises=[]; renderWorkoutList(); }
+
+function startWorkout() {
+  if(!workoutExercises.length) return;
+  const out = document.getElementById('workout-list');
+  let idx = 0;
+  function doNext() {
+    if(idx >= workoutExercises.length) {
+      out.innerHTML = `<div style="text-align:center;padding:20px;font-family:'Orbitron',monospace;color:var(--green);font-size:1rem;font-weight:700;letter-spacing:2px;">✅ WORKOUT COMPLETE!</div>`;
+      addXP(80); return;
+    }
+    const w = workoutExercises[idx];
+    const dur = parseInt(w.reps) || 20;
+    out.innerHTML = `
+      <div style="text-align:center;padding:20px;">
+        <div style="font-family:'Orbitron',monospace;font-size:0.65rem;letter-spacing:3px;color:var(--muted);margin-bottom:8px;">EXERCISE ${idx+1}/${workoutExercises.length}</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:700;color:var(--cyan);margin-bottom:16px;">${w.ex}</div>
+        <div class="timer-disp" id="wo-timer">${pad(Math.floor(dur/60))}:${pad(dur%60)}</div>
+        <div class="timer-prog-wrap"><div class="timer-prog" id="wo-prog"></div></div>
+      </div>`;
+    let rem = dur;
+    const iv = setInterval(() => {
+      rem--;
+      const d=document.getElementById('wo-timer'),p=document.getElementById('wo-prog');
+      if(!d){clearInterval(iv);return;}
+      d.innerText=`${pad(Math.floor(rem/60))}:${pad(rem%60)}`;
+      if(p) p.style.width=`${(rem/dur)*100}%`;
+      if(rem<=0){ clearInterval(iv); idx++; setTimeout(doNext,1000); }
+    },1000);
+  }
+  doNext();
+}
+
+function calcBMI() {
+  const w = parseFloat(document.getElementById('bt-weight').value);
+  const h = parseFloat(document.getElementById('bt-height').value)/100;
+  if(!w||!h) return;
+  const bmi = (w/(h*h)).toFixed(1);
+  const cats = [[18.5,'UNDERWEIGHT','var(--blue)'],[25,'NORMAL ✅','var(--green)'],[30,'OVERWEIGHT','var(--orange)'],[100,'OBESE','var(--red)']];
+  const cat = cats.find(c=>bmi<c[0]);
+  const el = document.getElementById('bmi-result');
+  el.style.display='block';
+  document.getElementById('bmi-val').innerText=bmi;
+  document.getElementById('bmi-val').style.color=cat[2];
+  document.getElementById('bmi-cat').innerText=cat[1];
+}
+
+function calcCalories() {
+  const met = parseFloat(document.getElementById('cal-ex').value);
+  const mins = parseFloat(document.getElementById('cal-mins').value);
+  const weight = S.pr?.weight || 70;
+  if(!mins) return;
+  const cal = Math.round(met * weight * (mins/60));
+  const el = document.getElementById('cal-result');
+  el.style.display='block';
+  document.getElementById('cal-val').innerText=`~${cal} kcal`;
+}
+
+// ===================== KITCHEN =====================
+async function generateRecipe() {
+  const ings = document.getElementById('ing-input').value.trim();
+  if(!ings) return;
+  const out = document.getElementById('recipe-output');
+  out.innerHTML = `<div style="text-align:center;padding:20px;color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:0.75rem;">// GENERATING RECIPE... //</div>`;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,
+        messages:[{role:'user',content:`You are a chef. Create ONE simple recipe using these ingredients: ${ings}. Format: Recipe name, then Ingredients list, then numbered Steps. Keep it concise and practical.`}]})
+    });
+    const data = await res.json();
+    const text = data.content?.map(b=>b.text||'').join('')||'Could not generate recipe.';
+    out.innerHTML = `<div class="recipe-out">${text}</div>`;
+  } catch(e) {
+    out.innerHTML = `<div class="recipe-out">Connection error. Try again.</div>`;
+  }
+}
+
+function scaleRecipe() {
+  const from = parseFloat(document.getElementById('scale-from').value)||1;
+  const to = parseFloat(document.getElementById('scale-to').value)||2;
+  const ings = document.getElementById('scale-ings').value.trim().split('\n');
+  const ratio = to/from;
+  const scaled = ings.map(line => {
+    return line.replace(/(\d+\.?\d*)/g, n => Math.round(parseFloat(n)*ratio*10)/10);
+  });
+  document.getElementById('scale-output').innerHTML = `<div class="recipe-out">${scaled.join('\n')}</div>`;
+}
+
+const MEALS = {
+  breakfast:['Omelette & toast','Overnight oats','Avocado toast','Smoothie bowl','Scrambled eggs','Pancakes','Greek yogurt'],
+  lunch:['Grilled chicken wrap','Pasta salad','Rice & veggies','Tuna sandwich','Lentil soup','Stir fry','Buddha bowl'],
+  dinner:['Salmon & rice','Chicken curry','Beef stir fry','Vegetable pasta','Grilled fish','Dal & roti','Burger & salad']
+};
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+function renderMealPlanner() {
+  const el = document.getElementById('meal-planner');
+  if(!S.mealPlan) S.mealPlan = {};
+  el.innerHTML = DAYS.map(d=>`
+    <div class="meal-day">
+      <div class="meal-day-name">${d.toUpperCase()}</div>
+      ${['breakfast','lunch','dinner'].map(slot=>`
+        <div class="meal-slot">
+          <span class="meal-slot-label">${slot.charAt(0).toUpperCase()+slot.slice(1)}:</span>
+          <span style="color:var(--text)">${S.mealPlan[d+slot]||'—'}</span>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+async function genMealPlan() {
+  const out = document.getElementById('meal-output');
+  out.innerHTML = `<div style="text-align:center;padding:16px;color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:0.75rem;">// GENERATING MEAL PLAN... //</div>`;
+  // Simple local generation
+  const plan = {};
+  DAYS.forEach(d=>{
+    ['breakfast','lunch','dinner'].forEach(slot=>{
+      const arr = MEALS[slot];
+      plan[d+slot] = arr[Math.floor(Math.random()*arr.length)];
+    });
+  });
+  S.mealPlan = plan;
+  saveState();
+  renderMealPlanner();
+  out.innerHTML = `<div style="color:var(--green);font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:2px;text-align:center;padding:8px;">✅ MEAL PLAN GENERATED</div>`;
+}
+
+// ===================== GAMES =====================
+let gameInstance = null;
+
+function loadGame(type) {
+  document.querySelectorAll('.cat-chip[onclick^="loadGame"]').forEach(c=>c.classList.remove('sel'));
+  event.currentTarget.classList.add('sel');
+  const gc = document.getElementById('game-container');
+  if(gameInstance) { clearInterval(gameInstance); gameInstance=null; }
+
+  if(type==='typing') renderTypingGame(gc);
+  else if(type==='pixel') renderPixelGame(gc);
+  else if(type==='memory') renderMemoryGame(gc);
+  else if(type==='reaction') renderReactionGame(gc);
+  else if(type==='snake') renderSnakeGame(gc);
+}
+
+// TYPING GAME
+const TYPING_WORDS = ['football','cricket','python','javascript','keyboard','algorithm','velocity','strength','champion','mission','operative','digital','protocol','network','challenge','interface','exercise','nutrition','meditation','discipline'];
+function renderTypingGame(gc) {
+  let score=0, timeLeft=30, currentWord='', gameActive=false, iv=null;
+  gc.innerHTML = `
+    <div class="game-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--muted);">SCORE: <span id="ty-score" style="color:var(--gold)">0</span></div>
+        <div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--muted);">TIME: <span id="ty-time" style="color:var(--orange)">30</span>s</div>
+      </div>
+      <div class="typing-word" id="ty-word">Press START</div>
+      <input class="typing-input" id="ty-input" placeholder="Type here..." disabled autocomplete="off" autocorrect="off" spellcheck="false">
+      <div style="margin-top:12px;display:flex;gap:10px;">
+        <button class="btn btn-cyan btn-full" onclick="startTypingGame()">▶ Start (30s)</button>
+      </div>
+      <div style="margin-top:10px;text-align:center;font-size:0.8rem;color:var(--muted);" id="ty-wpm"></div>
+    </div>`;
+
+  window.startTypingGame = function() {
+    score=0; timeLeft=30; gameActive=true;
+    document.getElementById('ty-score').innerText=0;
+    document.getElementById('ty-time').innerText=30;
+    document.getElementById('ty-wpm').innerText='';
+    const inp = document.getElementById('ty-input');
+    inp.disabled=false; inp.value=''; inp.focus();
+    newTypingWord();
+    if(iv) clearInterval(iv);
+    iv = setInterval(()=>{
+      timeLeft--;
+      const tel = document.getElementById('ty-time');
+      if(tel) tel.innerText=timeLeft;
+      if(timeLeft<=0){
+        clearInterval(iv); gameActive=false;
+        const wel=document.getElementById('ty-word');
+        if(wel) wel.innerText='DONE!';
+        const iEl=document.getElementById('ty-input');
+        if(iEl){iEl.disabled=true;}
+        const wpm=Math.round(score*2);
+        const wpmel=document.getElementById('ty-wpm');
+        if(wpmel) wpmel.innerText=`WPM: ~${wpm} | Words: ${score}`;
+        addXP(Math.min(score*3,100));
+      }
+    },1000);
+    gameInstance = iv;
+
+    inp.oninput = function() {
+      if(!gameActive) return;
+      const val = this.value.trim().toLowerCase();
+      if(val===currentWord) {
+        score++;
+        const sel=document.getElementById('ty-score');
+        if(sel) sel.innerText=score;
+        this.classList.add('correct');
+        setTimeout(()=>{ this.classList.remove('correct'); this.value=''; newTypingWord(); },150);
+      } else if(currentWord.startsWith(val)) {
+        this.classList.remove('wrong');
+      } else {
+        this.classList.add('wrong');
+      }
+    };
+  };
+
+  window.newTypingWord = function() {
+    currentWord = TYPING_WORDS[Math.floor(Math.random()*TYPING_WORDS.length)];
+    const el=document.getElementById('ty-word');
+    if(el) el.innerText=currentWord.toUpperCase();
+  };
+}
+
+// PIXEL SHOOTER GAME
+function renderPixelGame(gc) {
+  gc.innerHTML = `
+    <div class="game-card" style="text-align:center;">
+      <div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--muted);margin-bottom:10px;">SCORE: <span id="px-score" style="color:var(--gold)">0</span> &nbsp; LIVES: <span id="px-lives" style="color:var(--red)">❤️❤️❤️</span></div>
+      <canvas id="pixel-canvas" width="360" height="320"></canvas>
+      <div style="margin-top:10px;font-size:0.75rem;color:var(--muted);">← → Move &nbsp;|&nbsp; SPACE Shoot &nbsp;|&nbsp; Touch controls below</div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
+        <button class="btn btn-cyan" id="px-left" style="padding:14px 24px;font-size:1rem;">◀</button>
+        <button class="btn btn-orange" id="px-shoot" style="padding:14px 24px;font-size:1rem;">🔥</button>
+        <button class="btn btn-cyan" id="px-right" style="padding:14px 24px;font-size:1rem;">▶</button>
+      </div>
+    </div>`;
+  initPixelGame();
+}
+
+function initPixelGame() {
+  const canvas = document.getElementById('pixel-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=360,H=320;
+  let score=0,lives=3,gameOver=false;
+  let player={x:170,y:280,w:30,h:16,speed:5};
+  let bullets=[],enemies=[],particles=[];
+  let enemyDir=1,enemySpeed=0.8,frame=0;
+  let keys={};
+
+  // Init enemies
+  for(let r=0;r<3;r++) for(let c=0;c<8;c++) {
+    enemies.push({x:30+c*38,y:30+r*30,w:20,h:14,alive:true,color:r===0?'#ff1744':r===1?'#ff6d00':'#00e5ff'});
+  }
+
+  document.addEventListener('keydown',e=>{keys[e.code]=true; if(e.code==='Space'){e.preventDefault();shoot();}});
+  document.addEventListener('keyup',e=>{keys[e.code]=false;});
+  document.getElementById('px-left')?.addEventListener('mousedown',()=>keys['ArrowLeft']=true);
+  document.getElementById('px-left')?.addEventListener('mouseup',()=>keys['ArrowLeft']=false);
+  document.getElementById('px-left')?.addEventListener('touchstart',e=>{e.preventDefault();keys['ArrowLeft']=true;});
+  document.getElementById('px-left')?.addEventListener('touchend',()=>keys['ArrowLeft']=false);
+  document.getElementById('px-right')?.addEventListener('mousedown',()=>keys['ArrowRight']=true);
+  document.getElementById('px-right')?.addEventListener('mouseup',()=>keys['ArrowRight']=false);
+  document.getElementById('px-right')?.addEventListener('touchstart',e=>{e.preventDefault();keys['ArrowRight']=true;});
+  document.getElementById('px-right')?.addEventListener('touchend',()=>keys['ArrowRight']=false);
+  document.getElementById('px-shoot')?.addEventListener('click',shoot);
+  document.getElementById('px-shoot')?.addEventListener('touchstart',e=>{e.preventDefault();shoot();});
+
+  function shoot() {
+    if(gameOver) return;
+    bullets.push({x:player.x+player.w/2-2,y:player.y,w:4,h:10,speed:7});
+  }
+
+  let lastShoot=0;
+  function loop() {
+    if(!document.getElementById('pixel-canvas')) return;
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle='rgba(0,229,255,0.05)'; ctx.lineWidth=1;
+    for(let x=0;x<W;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    if(gameOver){
+      ctx.fillStyle='#00e5ff'; ctx.font='bold 28px Orbitron,monospace'; ctx.textAlign='center';
+      ctx.fillText('GAME OVER',W/2,H/2-20);
+      ctx.font='16px Orbitron,monospace'; ctx.fillText(`SCORE: ${score}`,W/2,H/2+20);
+      ctx.fillStyle='rgba(0,229,255,0.6)'; ctx.font='12px monospace'; ctx.fillText('Tap Shoot to restart',W/2,H/2+50);
+      return;
+    }
+
+    frame++;
+    if(keys['ArrowLeft']) player.x=Math.max(0,player.x-player.speed);
+    if(keys['ArrowRight']) player.x=Math.min(W-player.w,player.x+player.speed);
+
+    // Move enemies
+    if(frame%2===0){
+      let hitWall=false;
+      enemies.forEach(e=>{if(!e.alive)return;e.x+=enemyDir*enemySpeed;if(e.x<0||e.x+e.w>W)hitWall=true;});
+      if(hitWall){enemyDir*=-1;enemies.forEach(e=>{if(e.alive)e.y+=12;});}
+    }
+
+    // Enemy shoot
+    if(frame%90===0){
+      const alive=enemies.filter(e=>e.alive);
+      if(alive.length){
+        const e=alive[Math.floor(Math.random()*alive.length)];
+        bullets.push({x:e.x+e.w/2-2,y:e.y+e.h,w:4,h:8,speed:-4,enemy:true});
+      }
+    }
+
+    // Bullets
+    bullets=bullets.filter(b=>{
+      b.y-=b.speed;
+      if(b.y<0||b.y>H) return false;
+      ctx.fillStyle=b.enemy?'#ff1744':'#00e5ff';
+      if(!b.enemy)ctx.shadowColor='#00e5ff',ctx.shadowBlur=8;
+      ctx.fillRect(b.x,b.y,b.w,b.h);
+      ctx.shadowBlur=0;
+      if(!b.enemy){
+        for(let e of enemies){
+          if(!e.alive)continue;
+          if(b.x<e.x+e.w&&b.x+b.w>e.x&&b.y<e.y+e.h&&b.y+b.h>e.y){
+            e.alive=false;score+=10;
+            for(let i=0;i<6;i++) particles.push({x:e.x+e.w/2,y:e.y+e.h/2,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:20,color:e.color});
+            document.getElementById('px-score').innerText=score;
+            if(enemies.every(e=>!e.alive)){enemySpeed+=0.3;enemies.forEach((e,i)=>{e.alive=true;e.x=30+(i%8)*38;e.y=30+Math.floor(i/8)*30;});}
+            return false;
+          }
+        }
+      } else {
+        if(b.x<player.x+player.w&&b.x+b.w>player.x&&b.y<player.y+player.h&&b.y+b.h>player.y){
+          lives--;
+          const lel=document.getElementById('px-lives');
+          if(lel)lel.innerText='❤️'.repeat(Math.max(0,lives));
+          if(lives<=0)gameOver=true;
+          return false;
+        }
+      }
+      return true;
+    });
+
+    // Particles
+    particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life--;ctx.globalAlpha=p.life/20;ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,4,4);ctx.globalAlpha=1;return p.life>0;});
+
+    // Draw enemies
+    enemies.forEach(e=>{
+      if(!e.alive)return;
+      ctx.fillStyle=e.color;ctx.shadowColor=e.color;ctx.shadowBlur=6;
+      ctx.fillRect(e.x,e.y,e.w,e.h);
+      ctx.shadowBlur=0;
+    });
+
+    // Player
+    ctx.fillStyle='#00e5ff';ctx.shadowColor='#00e5ff';ctx.shadowBlur=10;
+    ctx.fillRect(player.x,player.y,player.w,player.h);
+    ctx.fillRect(player.x+player.w/2-3,player.y-8,6,8);
+    ctx.shadowBlur=0;
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// MEMORY GAME
+function renderMemoryGame(gc) {
+  const emojis=['⚽','🏏','🍳','💪','🧠','📸','🎵','🏆','⚡','🔥','💎','🎯'];
+  let cards=[],flipped=[],matched=[],moves=0,canFlip=true;
+  const pairs=[...emojis.slice(0,8),...emojis.slice(0,8)].sort(()=>Math.random()-0.5);
+
+  gc.innerHTML=`<div class="game-card"><div style="display:flex;justify-content:space-between;margin-bottom:14px;"><div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--muted);">MOVES: <span id="mem-moves" style="color:var(--gold)">0</span></div><div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--muted);">MATCHED: <span id="mem-matched" style="color:var(--green)">0</span>/8</div></div><div id="mem-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div></div>`;
+
+  const grid=document.getElementById('mem-grid');
+  pairs.forEach((emoji,i)=>{
+    const card=document.createElement('div');
+    card.style.cssText='height:64px;background:var(--card2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;cursor:pointer;transition:all 0.3s;user-select:none;';
+    card.dataset.idx=i; card.dataset.emoji=emoji;
+    card.addEventListener('click',()=>{
+      if(!canFlip||flipped.includes(i)||matched.includes(i))return;
+      card.innerText=emoji; flipped.push(i);
+      if(flipped.length===2){
+        canFlip=false; moves++;
+        document.getElementById('mem-moves').innerText=moves;
+        const [a,b]=flipped;
+        const cards=document.querySelectorAll('#mem-grid div');
+        if(pairs[a]===pairs[b]){
+          matched.push(a,b);
+          cards[a].style.borderColor='var(--green)';cards[b].style.borderColor='var(--green)';
+          document.getElementById('mem-matched').innerText=matched.length/2;
+          flipped=[]; canFlip=true;
+          if(matched.length===16){ addXP(60); setTimeout(()=>{ grid.insertAdjacentHTML('afterend','<div style="text-align:center;margin-top:14px;font-family:Orbitron,monospace;font-size:0.8rem;color:var(--gold);letter-spacing:2px;">🏆 COMPLETE! +60 XP</div>'); },300); }
+        } else {
+          setTimeout(()=>{cards[a].innerText='';cards[b].innerText='';flipped=[];canFlip=true;},900);
+        }
+      }
+    });
+    grid.appendChild(card);
+  });
+}
+
+// REACTION GAME
+function renderReactionGame(gc) {
+  let waiting=false,startTime=0,best=S.pr?.reaction||null;
+  gc.innerHTML=`<div class="game-card" style="text-align:center;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.65rem;letter-spacing:3px;color:var(--muted);margin-bottom:8px;">REACTION TIME TEST</div>
+    <div id="react-box" style="height:200px;border-radius:12px;background:var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:14px;transition:background 0.2s;border:2px solid var(--border2);">
+      <div id="react-txt" style="font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;letter-spacing:2px;color:var(--muted);">TAP TO START</div>
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);">Best: <span id="react-best" style="color:var(--gold)">${best?best+'ms':'—'}</span></div>
+  </div>`;
+
+  let timeout;
+  document.getElementById('react-box').onclick=function(){
+    if(!waiting){
+      this.style.background='#ff1744'; document.getElementById('react-txt').innerText='WAIT...';
+      document.getElementById('react-txt').style.color='#fff';
+      waiting=true;
+      timeout=setTimeout(()=>{
+        this.style.background='#00ff88'; document.getElementById('react-txt').innerText='TAP NOW!';
+        startTime=Date.now();
+      },1000+Math.random()*3000);
+    } else if(startTime===0){
+      clearTimeout(timeout); waiting=false; startTime=0;
+      this.style.background='var(--border)'; document.getElementById('react-txt').innerText='TOO EARLY! Tap to retry';
+      document.getElementById('react-txt').style.color='var(--red)';
+    } else {
+      const rt=Date.now()-startTime; waiting=false; startTime=0;
+      this.style.background='var(--border)';
+      document.getElementById('react-txt').innerText=`${rt}ms — ${rt<200?'⚡ INSANE!':rt<300?'🔥 Fast!':rt<500?'👍 Good':'😐 Keep trying'}`;
+      document.getElementById('react-txt').style.color='var(--cyan)';
+      if(!best||rt<best){ best=rt; S.pr=S.pr||{}; S.pr.reaction=rt; saveState(); addXP(30); }
+      document.getElementById('react-best').innerText=best+'ms';
+    }
+  };
+}
+
+// SNAKE GAME
+function renderSnakeGame(gc) {
+  gc.innerHTML=`<div class="game-card" style="text-align:center;"><div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--muted);margin-bottom:8px;">SCORE: <span id="sn-score" style="color:var(--gold)">0</span></div><canvas id="snake-canvas" width="320" height="320" style="border:2px solid var(--cyan);border-radius:8px;background:#000;"></canvas><div style="margin-top:10px;font-size:0.75rem;color:var(--muted);">Arrow keys or swipe</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:180px;margin:10px auto 0;"><div></div><button class="btn btn-cyan" id="sn-up" style="padding:10px;">▲</button><div></div><button class="btn btn-cyan" id="sn-left" style="padding:10px;">◀</button><button class="btn btn-cyan" id="sn-down" style="padding:10px;">▼</button><button class="btn btn-cyan" id="sn-right" style="padding:10px;">▶</button></div></div>`;
+  initSnake();
+}
+
+function initSnake() {
+  const canvas=document.getElementById('snake-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const SZ=20,W=16,H=16;
+  let snake=[{x:8,y:8}],dir={x:1,y:0},food={x:5,y:5},score=0,alive=true,iv;
+
+  function placeFood(){ food={x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H)}; }
+  function draw(){
+    ctx.fillStyle='#000';ctx.fillRect(0,0,320,320);
+    // Grid
+    ctx.strokeStyle='rgba(0,229,255,0.05)';
+    for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*SZ,0);ctx.lineTo(x*SZ,H*SZ);ctx.stroke();}
+    for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*SZ);ctx.lineTo(W*SZ,y*SZ);ctx.stroke();}
+    // Food
+    ctx.fillStyle='#ff1744';ctx.shadowColor='#ff1744';ctx.shadowBlur=10;
+    ctx.fillRect(food.x*SZ+2,food.y*SZ+2,SZ-4,SZ-4);ctx.shadowBlur=0;
+    // Snake
+    snake.forEach((s,i)=>{
+      ctx.fillStyle=i===0?'#00e5ff':'#00b8d4';
+      ctx.shadowColor=i===0?'#00e5ff':'transparent';ctx.shadowBlur=i===0?8:0;
+      ctx.fillRect(s.x*SZ+1,s.y*SZ+1,SZ-2,SZ-2);ctx.shadowBlur=0;
+    });
+    if(!alive){
+      ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,320,320);
+      ctx.fillStyle='#00e5ff';ctx.font='bold 22px Orbitron,monospace';ctx.textAlign='center';
+      ctx.fillText('GAME OVER',160,140);ctx.font='14px Orbitron,monospace';
+      ctx.fillText('Score: '+score,160,170);ctx.fillText('Tap to restart',160,200);
+    }
+  }
+
+  function move(){
+    if(!alive)return;
+    const head={x:(snake[0].x+dir.x+W)%W,y:(snake[0].y+dir.y+H)%H};
+    if(snake.some(s=>s.x===head.x&&s.y===head.y)){alive=false;clearInterval(iv);draw();addXP(Math.min(score*2,80));return;}
+    snake.unshift(head);
+    if(head.x===food.x&&head.y===food.y){score++;document.getElementById('sn-score').innerText=score;placeFood();}
+    else snake.pop();
+    draw();
+  }
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowUp'&&dir.y===0)dir={x:0,y:-1};
+    else if(e.key==='ArrowDown'&&dir.y===0)dir={x:0,y:1};
+    else if(e.key==='ArrowLeft'&&dir.x===0)dir={x:-1,y:0};
+    else if(e.key==='ArrowRight'&&dir.x===0)dir={x:1,y:0};
+  });
+  document.getElementById('sn-up')?.addEventListener('click',()=>{if(dir.y===0)dir={x:0,y:-1};});
+  document.getElementById('sn-down')?.addEventListener('click',()=>{if(dir.y===0)dir={x:0,y:1};});
+  document.getElementById('sn-left')?.addEventListener('click',()=>{if(dir.x===0)dir={x:-1,y:0};});
+  document.getElementById('sn-right')?.addEventListener('click',()=>{if(dir.x===0)dir={x:1,y:0};});
+
+  canvas.addEventListener('click',()=>{if(!alive){snake=[{x:8,y:8}];dir={x:1,y:0};score=0;alive=true;placeFood();document.getElementById('sn-score').innerText=0;clearInterval(iv);iv=setInterval(move,150);gameInstance=iv;}});
+
+  iv=setInterval(move,150);
+  gameInstance=iv;
+  draw();
+}
+
+// ===================== LEARN =====================
+const LESSONS = {
+  html:{title:'HTML FUNDAMENTALS',color:'var(--orange)',items:[
+    {title:'What is HTML?',text:'HTML (HyperText Markup Language) is the skeleton of every webpage. It uses tags to structure content.',code:'<!DOCTYPE html>\n<html>\n  <head><title>My Page</title></head>\n  <body><h1>Hello World!</h1></body>\n</html>',quiz:{q:'What does HTML stand for?',opts:['HyperText Markup Language','High Tech Modern Language','HyperText Modern Layout','Hyperlink Text Markup'],ans:0}},
+    {title:'Tags & Elements',text:'HTML uses opening and closing tags. Everything between them is the content.',code:'<h1>Big Heading</h1>\n<p>A paragraph of text.</p>\n<a href="https://google.com">A Link</a>\n<img src="photo.jpg" alt="A photo">',quiz:{q:'Which tag creates a hyperlink?',opts:['<link>','<href>','<a>','<url>'],ans:2}},
+    {title:'Lists & Tables',text:'Use ul/ol for lists and table for tabular data.',code:'<ul>\n  <li>Football</li>\n  <li>Cricket</li>\n</ul>\n\n<ol>\n  <li>Step One</li>\n  <li>Step Two</li>\n</ol>',quiz:{q:'Which creates an unordered list?',opts:['<ol>','<ul>','<list>','<li>'],ans:1}}
+  ]},
+  css:{title:'CSS STYLING',color:'var(--blue)',items:[
+    {title:'What is CSS?',text:'CSS (Cascading Style Sheets) controls how HTML looks — colors, fonts, layout, animations.',code:'body {\n  background: #000;\n  color: white;\n  font-family: monospace;\n}\n\nh1 {\n  color: cyan;\n  font-size: 2rem;\n}',quiz:{q:'What does CSS stand for?',opts:['Creative Style Sheets','Cascading Style Sheets','Computer Style System','Color Style Sheets'],ans:1}},
+    {title:'Selectors',text:'CSS selectors target HTML elements. You can select by tag, class, or ID.',code:'/* Tag selector */\np { color: red; }\n\n/* Class selector */\n.btn { padding: 10px; }\n\n/* ID selector */\n#header { font-size: 2rem; }',quiz:{q:'How do you select a class in CSS?',opts:['#classname','.classname','@classname','&classname'],ans:1}},
+    {title:'Flexbox',text:'Flexbox is the easiest way to layout and align elements.',code:'.container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: 20px;\n}',quiz:{q:'Which property activates flexbox?',opts:['layout: flex','position: flex','display: flex','flex: on'],ans:2}}
+  ]},
+  js:{title:'JAVASCRIPT',color:'var(--gold)',items:[
+    {title:'Variables',text:'Variables store data. Use let for changeable values, const for fixed ones.',code:'let score = 0;\nconst playerName = "VIA";\n\nscore = score + 10; // now 10\nconsole.log(score); // 10',quiz:{q:'Which keyword is for a constant variable?',opts:['var','let','const','fixed'],ans:2}},
+    {title:'Functions',text:'Functions are reusable blocks of code. Call them whenever you need them.',code:'function greet(name) {\n  return "Hello, " + name + "!";\n}\n\nconst result = greet("VIA");\nconsole.log(result); // Hello, VIA!',quiz:{q:'How do you call a function named greet?',opts:['call greet()','run greet()','greet()','execute greet()'],ans:2}},
+    {title:'Arrays',text:'Arrays store multiple values in one variable.',code:'const sports = ["football","cricket","tennis"];\n\nconsole.log(sports[0]); // football\nsports.push("boxing"); // add item\nconsole.log(sports.length); // 4',quiz:{q:'How do you access the first item in an array?',opts:['array[1]','array[0]','array.first()','array.get(0)'],ans:1}}
+  ]},
+  python:{title:'PYTHON',color:'var(--green)',items:[
+    {title:'Variables & Print',text:'Python is clean and simple. No curly braces or semicolons needed.',code:'name = "VIA AI"\nscore = 100\n\nprint(name)        # VIA AI\nprint(f"Score: {score}") # Score: 100',quiz:{q:'How do you print in Python?',opts:['console.log()','echo()','print()','output()'],ans:2}},
+    {title:'Lists',text:'Python lists are like JavaScript arrays — they store multiple values.',code:'sports = ["football", "cricket", "tennis"]\n\nprint(sports[0])  # football\nsports.append("boxing")  # add item\nprint(len(sports))  # 4',quiz:{q:'How do you add to a Python list?',opts:['.push()','append()','add()','insert()'],ans:1}},
+    {title:'Loops',text:'Use for loops to repeat code for each item in a list.',code:'sports = ["football", "cricket"]\n\nfor sport in sports:\n    print(f"I love {sport}")\n\n# Output:\n# I love football\n# I love cricket',quiz:{q:'What keyword starts a loop in Python?',opts:['loop','foreach','for','repeat'],ans:2}}
+  ]},
+  git:{title:'GIT & GITHUB',color:'var(--magenta)',items:[
+    {title:'What is Git?',text:'Git is version control — it tracks changes to your code. GitHub stores your code online.',code:'# Initialize a new git repo\ngit init\n\n# Check what changed\ngit status\n\n# See commit history\ngit log',quiz:{q:'What command initializes a git repo?',opts:['git start','git init','git create','git begin'],ans:1}},
+    {title:'Commit & Push',text:'Save your work with commit and upload it to GitHub with push.',code:'# Stage all changes\ngit add .\n\n# Save with a message\ngit commit -m "Add new feature"\n\n# Upload to GitHub\ngit push origin main',quiz:{q:'What saves changes in git?',opts:['git save','git upload','git commit','git push'],ans:2}},
+    {title:'Branches',text:'Branches let you work on features without breaking the main code.',code:'# Create a new branch\ngit branch new-feature\n\n# Switch to it\ngit checkout new-feature\n\n# Merge back to main\ngit merge new-feature',quiz:{q:'What creates a new branch?',opts:['git new','git branch','git fork','git copy'],ans:1}}
+  ]},
+  math:{title:'MENTAL MATH',color:'var(--purple)',items:[
+    {title:'Percentage Tricks',text:'Calculate percentages fast in your head using these shortcuts.',code:'// 10% of any number: divide by 10\n// 10% of 350 = 35\n\n// 5% = half of 10%\n// 5% of 350 = 17.5\n\n// 15% = 10% + 5%\n// 15% of 350 = 35 + 17.5 = 52.5',quiz:{q:'What is 10% of 480?',opts:['4.8','48','480','0.48'],ans:1}},
+    {title:'Squaring Numbers',text:'Squaring numbers ending in 5 is easy: multiply (n-5)(n+5) and add 25.',code:'// 25² = (20×30) + 25 = 600 + 25 = 625\n// 35² = (30×40) + 25 = 1200 + 25 = 1225\n// 45² = (40×50) + 25 = 2000 + 25 = 2025',quiz:{q:'What is 15²?',opts:['215','225','235','245'],ans:1}},
+    {title:'Fast Multiplication',text:'Multiply near 100 using complements — the difference from 100.',code:'// 97 × 96:\n// 97 is 3 below 100\n// 96 is 4 below 100\n// Left: 97-4 = 93 (or 96-3 = 93)\n// Right: 3×4 = 12\n// Answer: 9312',quiz:{q:'What is 98 × 97?',opts:['9506','9506','9506','9506'],ans:0}}
+  ]}
+};
+
+let currentLesson = null;
+let lessonIdx = 0;
+
+function loadLesson(topic) {
+  document.querySelectorAll('.cat-chip[onclick^="loadLesson"]').forEach(c=>c.classList.remove('sel'));
+  event.currentTarget.classList.add('sel');
+  currentLesson = topic;
+  lessonIdx = 0;
+  renderLesson();
+}
+
+function renderLesson() {
+  const lc = document.getElementById('learn-container');
+  if(!currentLesson) return;
+  const lesson = LESSONS[currentLesson];
+  const item = lesson.items[lessonIdx];
+  const total = lesson.items.length;
+
+  lc.innerHTML = `
+    <div class="lesson-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div class="card-tag" style="color:${lesson.color};margin:0;">${lesson.title}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--muted);">${lessonIdx+1}/${total}</div>
+      </div>
+      <div class="lesson-title" style="color:${lesson.color};">${item.title}</div>
+      <div class="lesson-text">${item.text}</div>
+      <div class="code-block">${item.code}</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:2px;color:var(--muted);margin-bottom:10px;">// QUICK QUIZ</div>
+      <div style="font-size:0.9rem;font-weight:700;margin-bottom:12px;">${item.quiz.q}</div>
+      <div id="quiz-opts">
+        ${item.quiz.opts.map((o,i)=>`<button class="quiz-option" onclick="answerQuiz(${i},${item.quiz.ans},this)">${o}</button>`).join('')}
+      </div>
+      <div id="quiz-feedback" style="margin:10px 0;font-size:0.85rem;font-weight:700;min-height:1.2rem;"></div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        ${lessonIdx>0?`<button class="btn btn-orange" onclick="lessonNav(-1)">◀ Prev</button>`:''}
+        ${lessonIdx<total-1?`<button class="btn btn-cyan" onclick="lessonNav(1)" id="next-btn">Next ▶</button>`:`<button class="btn btn-green" onclick="lessonComplete()">✅ Complete</button>`}
+      </div>
+    </div>`;
+}
+
+function answerQuiz(chosen, correct, btn) {
+  document.querySelectorAll('.quiz-option').forEach(b=>b.disabled=true);
+  const fb = document.getElementById('quiz-feedback');
+  if(chosen===correct){
+    btn.classList.add('correct');
+    fb.innerHTML='<span style="color:var(--green)">✅ Correct! +15 XP</span>';
+    addXP(15);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.quiz-option')[correct].classList.add('correct');
+    fb.innerHTML='<span style="color:var(--red)">❌ Wrong. Study and try again.</span>';
+  }
+}
+
+function lessonNav(dir) {
+  lessonIdx+=dir;
+  renderLesson();
+}
+
+function lessonComplete() {
+  addXP(40);
+  document.getElementById('learn-container').innerHTML=`<div class="lesson-card" style="text-align:center;"><div style="font-size:2.5rem;margin-bottom:12px;">🏆</div><div style="font-family:'Orbitron',monospace;font-size:0.9rem;font-weight:700;color:var(--gold);letter-spacing:2px;">LESSON COMPLETE!</div><div style="color:var(--muted);margin-top:8px;font-size:0.85rem;">+40 XP earned</div></div>`;
+}
+
+// ===================== THEMES =====================
+const THEMES = {
+  cyber:{primary:'#00e5ff',bg:'#030507',card:'#0a1018',border:'#162030',accent:'#d500f9'},
+  military:{primary:'#00ff88',bg:'#060a04',card:'#0a120a',border:'#1a2a12',accent:'#88cc00'},
+  gold:{primary:'#ffd600',bg:'#0a0800',card:'#120f00',border:'#2a2000',accent:'#ff6d00'},
+  red:{primary:'#ff1744',bg:'#0a0205',card:'#150308',border:'#2a0810',accent:'#ff6d00'},
+  purple:{primary:'#d500f9',bg:'#070310',card:'#0f0818',border:'#200a30',accent:'#2979ff'},
+  ice:{primary:'#2979ff',bg:'#030508',card:'#080d18',border:'#101828',accent:'#00e5ff'}
+};
+
+function applyTheme(name) {
+  const t = THEMES[name];
+  if(!t) return;
+  const root = document.documentElement;
+  root.style.setProperty('--cyan', t.primary);
+  root.style.setProperty('--bg', t.bg);
+  root.style.setProperty('--card', t.card);
+  root.style.setProperty('--border', t.border);
+  root.style.setProperty('--magenta', t.accent);
+  S.theme=name; saveState();
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('active-theme'));
+  document.querySelector(`.theme-card[data-theme="${name}"]`)?.classList.add('active-theme');
+  showXPPop('THEME SET');
+}
+
+// Load saved theme
+if(S.theme && THEMES[S.theme]) applyTheme(S.theme);
+
+// ===================== CUSTOM MISSIONS =====================
+function saveCustomMission() {
+  const title = document.getElementById('cm-title').value.trim();
+  const desc = document.getElementById('cm-desc').value.trim();
+  const xpV = parseInt(document.getElementById('cm-xp').value)||50;
+  const timer = parseInt(document.getElementById('cm-timer').value)||0;
+  if(!title||!desc) return;
+  if(!S.customMissions) S.customMissions=[];
+  S.customMissions.push({title,desc,xp:xpV,timer,color:'var(--cyan)',tag:'CUSTOM // MISSION'});
+  saveState();
+  document.getElementById('cm-title').value='';
+  document.getElementById('cm-desc').value='';
+  renderCustomMissions();
+  showXPPop('Mission Saved!');
+}
+
+function renderCustomMissions() {
+  const el=document.getElementById('custom-missions-list');
+  if(!el||!S.customMissions?.length) return;
+  el.innerHTML=`<div class="sec-title" style="margin-top:16px;">Saved Missions</div>`+
+    S.customMissions.map((m,i)=>`
+    <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;">
+      <div style="flex:1;">
+        <div style="font-family:'Orbitron',monospace;font-size:0.72rem;font-weight:700;color:var(--cyan);letter-spacing:1px;margin-bottom:4px;">${m.title}</div>
+        <div style="font-size:0.82rem;color:var(--text2);">${m.desc}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <button class="btn btn-cyan" style="font-size:0.5rem;padding:6px 10px;" onclick="runCustomMission(${i})">▶ Run</button>
+        <button class="btn btn-orange" style="font-size:0.5rem;padding:6px 10px;" onclick="deleteCustomMission(${i})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function runCustomMission(i) {
+  const m=S.customMissions[i];
+  showPage2('home');
+  setTimeout(()=>{ renderAct(m, document.getElementById('output')); },100);
+}
+
+function deleteCustomMission(i) {
+  S.customMissions.splice(i,1);
+  saveState();
+  renderCustomMissions();
+}
+
+function showPage2(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.drawer-item').forEach(t=>t.classList.remove('active-drawer'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.getElementById('di-'+id)?.classList.add('active-drawer');
+}
+
+// Init kitchen meal planner
+renderMealPlanner();
+renderCustomMissions();
+
+// ===================== ANIME QUIZ GAME =====================
+const ANIME_DB = {
+  naruto:[
+    {name:'Naruto Uzumaki',emoji:'🍥',clue:'Wears an orange jumpsuit. Dreams of being Hokage.',series:'Naruto',wrong:['Sasuke Uchiha','Sakura Haruno','Kakashi Hatake']},
+    {name:'Sasuke Uchiha',emoji:'⚡',clue:'Last surviving Uchiha. Has the Sharingan eye.',series:'Naruto',wrong:['Naruto Uzumaki','Itachi Uchiha','Neji Hyuga']},
+    {name:'Kakashi Hatake',emoji:'📖',clue:'Always reading. Copy Ninja. Wears a mask.',series:'Naruto',wrong:['Might Guy','Jiraiya','Minato Namikaze']},
+    {name:'Itachi Uchiha',emoji:'🌙',clue:'Massacred his own clan. Works for Akatsuki.',series:'Naruto',wrong:['Obito Uchiha','Madara Uchiha','Sasuke Uchiha']},
+    {name:'Jiraiya',emoji:'🐸',clue:'Legendary Sannin. Pervy Sage. Trained Naruto.',series:'Naruto',wrong:['Orochimaru','Tsunade','Minato Namikaze']}
+  ],
+  onepiece:[
+    {name:'Monkey D. Luffy',emoji:'🏴‍☠️',clue:'Captain of the Straw Hats. Rubber body powers.',series:'One Piece',wrong:['Roronoa Zoro','Portgas D. Ace','Trafalgar Law']},
+    {name:'Roronoa Zoro',emoji:'⚔️',clue:'Three-sword style. Wants to be the greatest swordsman.',series:'One Piece',wrong:['Monkey D. Luffy','Dracule Mihawk','Shanks']},
+    {name:'Nami',emoji:'🌩️',clue:'Navigator of the crew. Controls weather with her staff.',series:'One Piece',wrong:['Robin','Vivi','Hancock']},
+    {name:'Portgas D. Ace',emoji:'🔥',clue:'Fire Fist. Luffy\'s brother. Commander of Whitebeard.',series:'One Piece',wrong:['Sabo','Marco','Whitebeard']},
+    {name:'Trafalgar Law',emoji:'💀',clue:'Surgeon of Death. ROOM ability. Wears a spotted hat.',series:'One Piece',wrong:['Eustass Kid','Donquixote Doflamingo','Monkey D. Luffy']}
+  ],
+  dragonball:[
+    {name:'Goku',emoji:'🐉',clue:'Pure-hearted Saiyan. Loves fighting and eating.',series:'Dragon Ball Z',wrong:['Vegeta','Gohan','Broly']},
+    {name:'Vegeta',emoji:'👑',clue:'Prince of the Saiyans. Always rivals Goku.',series:'Dragon Ball Z',wrong:['Goku','Nappa','Raditz']},
+    {name:'Piccolo',emoji:'💚',clue:'Green Namekian. Became Gohan\'s mentor.',series:'Dragon Ball Z',wrong:['Cell','Frieza','Nail']},
+    {name:'Frieza',emoji:'❄️',clue:'Galactic emperor. Destroyed Planet Vegeta.',series:'Dragon Ball Z',wrong:['Cell','Buu','Cooler']},
+    {name:'Gohan',emoji:'📚',clue:'Goku\'s son. Hidden power. Became the Great Saiyaman.',series:'Dragon Ball Z',wrong:['Goten','Trunks','Goku']}
+  ],
+  demonslayer:[
+    {name:'Tanjiro Kamado',emoji:'🌊',clue:'Wears checkered clothes. Uses Water and Hinokami breathing.',series:'Demon Slayer',wrong:['Zenitsu Agatsuma','Inosuke Hashibira','Giyu Tomioka']},
+    {name:'Nezuko Kamado',emoji:'🎋',clue:'Tanjiro\'s sister. Turned into a demon. Fits in a box.',series:'Demon Slayer',wrong:['Kanao Tsuyuri','Mitsuri Kanroji','Aoi Kanzaki']},
+    {name:'Zenitsu Agatsuma',emoji:'⚡',clue:'Scared of everything but incredibly fast asleep.',series:'Demon Slayer',wrong:['Tanjiro Kamado','Inosuke Hashibira','Tengen Uzui']},
+    {name:'Inosuke Hashibira',emoji:'🐗',clue:'Wears a boar head mask. Raised by boars.',series:'Demon Slayer',wrong:['Tanjiro Kamado','Zenitsu Agatsuma','Genya Shinazugawa']},
+    {name:'Rengoku Kyojuro',emoji:'🔥',clue:'Flame Hashira. Always enthusiastic. Loves his mother\'s udon.',series:'Demon Slayer',wrong:['Giyu Tomioka','Tengen Uzui','Sanemi Shinazugawa']}
+  ],
+  aot:[
+    {name:'Eren Yeager',emoji:'💥',clue:'Wants to destroy the world beyond the walls.',series:'Attack on Titan',wrong:['Mikasa Ackerman','Armin Arlert','Reiner Braun']},
+    {name:'Mikasa Ackerman',emoji:'🧣',clue:'Wears a red scarf. Strongest soldier of her generation.',series:'Attack on Titan',wrong:['Eren Yeager','Historia Reiss','Sasha Blouse']},
+    {name:'Levi Ackerman',emoji:'🗡️',clue:'Humanity\'s strongest soldier. Hates dirt.',series:'Attack on Titan',wrong:['Erwin Smith','Hange Zoe','Petra Ral']},
+    {name:'Armin Arlert',emoji:'💡',clue:'Strategic genius. Best friend of Eren and Mikasa.',series:'Attack on Titan',wrong:['Eren Yeager','Bertholdt Hoover','Connie Springer']},
+    {name:'Reiner Braun',emoji:'🛡️',clue:'Armored Titan. Warrior from Marley.',series:'Attack on Titan',wrong:['Bertholdt Hoover','Annie Leonhart','Porco Galliard']}
+  ],
+  bleach:[
+    {name:'Ichigo Kurosaki',emoji:'🌙',clue:'High school student who becomes a Soul Reaper.',series:'Bleach',wrong:['Renji Abarai','Uryu Ishida','Byakuya Kuchiki']},
+    {name:'Rukia Kuchiki',emoji:'❄️',clue:'Small Soul Reaper who gave Ichigo her powers.',series:'Bleach',wrong:['Orihime Inoue','Yoruichi Shihoin','Rangiku Matsumoto']},
+    {name:'Byakuya Kuchiki',emoji:'🌸',clue:'Captain of Squad 6. Controls blade petals.',series:'Bleach',wrong:['Rukia Kuchiki','Renji Abarai','Kenpachi Zaraki']},
+    {name:'Kenpachi Zaraki',emoji:'⚔️',clue:'Captain who loves battle. Has bells in his hair.',series:'Bleach',wrong:['Byakuya Kuchiki','Sajin Komamura','Shunsui Kyoraku']},
+    {name:'Sosuke Aizen',emoji:'👓',clue:'Betrayed Soul Society. Manipulated everyone with illusions.',series:'Bleach',wrong:['Gin Ichimaru','Kaname Tosen','Kisuke Urahara']}
+  ],
+  mha:[
+    {name:'Izuku Midoriya',emoji:'💚',clue:'Born Quirkless. Inherits One For All from All Might.',series:'My Hero Academia',wrong:['Katsuki Bakugo','Shoto Todoroki','Tenya Iida']},
+    {name:'Katsuki Bakugo',emoji:'💥',clue:'Explosive personality and Quirk. Childhood rival of Deku.',series:'My Hero Academia',wrong:['Izuku Midoriya','Eijiro Kirishima','Denki Kaminari']},
+    {name:'All Might',emoji:'💪',clue:'Symbol of Peace. The world\'s greatest hero.',series:'My Hero Academia',wrong:['Endeavor','Hawks','Edgeshot']},
+    {name:'Shoto Todoroki',emoji:'🌡️',clue:'Half ice half fire. Son of Endeavor.',series:'My Hero Academia',wrong:['Izuku Midoriya','Katsuki Bakugo','Fumikage Tokoyami']},
+    {name:'Tomura Shigaraki',emoji:'🖐️',clue:'Leader of the League of Villains. Decay Quirk.',series:'My Hero Academia',wrong:['Dabi','Himiko Toga','Twice']}
+  ],
+  jjk:[
+    {name:'Yuji Itadori',emoji:'👊',clue:'Physically powerful. Host of Ryomen Sukuna.',series:'Jujutsu Kaisen',wrong:['Megumi Fushiguro','Nobara Kugisaki','Aoi Todo']},
+    {name:'Gojo Satoru',emoji:'🕶️',clue:'Strongest jujutsu sorcerer. Always wearing a blindfold.',series:'Jujutsu Kaisen',wrong:['Suguru Geto','Kento Nanami','Yuta Okkotsu']},
+    {name:'Megumi Fushiguro',emoji:'🐕',clue:'Uses shadow techniques and shikigami including dogs.',series:'Jujutsu Kaisen',wrong:['Yuji Itadori','Toge Inumaki','Panda']},
+    {name:'Ryomen Sukuna',emoji:'👹',clue:'King of Curses. Has multiple arms and eyes.',series:'Jujutsu Kaisen',wrong:['Mahito','Jogo','Hanami']},
+    {name:'Nobara Kugisaki',emoji:'🔨',clue:'Uses a hammer and nails as weapons. From the countryside.',series:'Jujutsu Kaisen',wrong:['Yuji Itadori','Maki Zenin','Mai Zenin']}
+  ],
+  hxh:[
+    {name:'Gon Freecss',emoji:'🎣',clue:'Cheerful boy searching for his Hunter father.',series:'Hunter x Hunter',wrong:['Killua Zoldyck','Leorio Paradinight','Kurapika']},
+    {name:'Killua Zoldyck',emoji:'⚡',clue:'From an assassin family. Best friends with Gon.',series:'Hunter x Hunter',wrong:['Gon Freecss','Alluka Zoldyck','Illumi Zoldyck']},
+    {name:'Hisoka',emoji:'🃏',clue:'Magician with a twisted obsession with strong fighters.',series:'Hunter x Hunter',wrong:['Chrollo Lucilfer','Illumi Zoldyck','Ging Freecss']},
+    {name:'Kurapika',emoji:'🔗',clue:'Last of the Kurta clan. Eyes turn red with rage.',series:'Hunter x Hunter',wrong:['Leorio Paradinight','Gon Freecss','Killua Zoldyck']},
+    {name:'Meruem',emoji:'♟️',clue:'King of the Chimera Ants. Obsessed with Gungi.',series:'Hunter x Hunter',wrong:['Neferpitou','Shaiapouf','Menthuthuyoupi']}
+  ],
+  fma:[
+    {name:'Edward Elric',emoji:'⚙️',clue:'Short alchemist with automail arm and leg.',series:'Fullmetal Alchemist',wrong:['Alphonse Elric','Roy Mustang','Winry Rockbell']},
+    {name:'Roy Mustang',emoji:'🔥',clue:'Flame Alchemist. Wants to become Fuhrer.',series:'Fullmetal Alchemist',wrong:['Edward Elric','Maes Hughes','Alex Louis Armstrong']},
+    {name:'Alphonse Elric',emoji:'🛡️',clue:'Edward\'s younger brother. Soul bound to armor.',series:'Fullmetal Alchemist',wrong:['Edward Elric','Ling Yao','Heinkel']},
+    {name:'Scar',emoji:'✝️',clue:'Ishvalan warrior with a cross-shaped scar on forehead.',series:'Fullmetal Alchemist',wrong:['Pride','Wrath','Gluttony']},
+    {name:'Lust',emoji:'💄',clue:'Homunculus with ultimate spear fingertips.',series:'Fullmetal Alchemist',wrong:['Envy','Greed','Pride']}
+  ]
+};
+
+let animeMode = null;
+let animeTimer = null;
+let animeScore = 0;
+let animeStreak = 0;
+let currentAnimeChar = null;
+
+function selectAnimeMode(mode) {
+  animeMode = mode;
+  document.getElementById('mode-random').className = 'anime-mode-card' + (mode==='random'?' selected':'');
+  document.getElementById('mode-specific').className = 'anime-mode-card' + (mode==='specific'?' selected-magenta':'');
+  document.getElementById('anime-selector').style.display = mode==='specific'?'block':'none';
+  document.getElementById('start-anime-btn').disabled = false;
+}
+
+function startAnimeRound() {
+  animeScore = 0; animeStreak = 0;
+  document.getElementById('anime-score').innerText = 0;
+  document.getElementById('anime-streak').innerText = 0;
+  document.getElementById('anime-setup').style.display = 'none';
+  document.getElementById('anime-game').style.display = 'block';
+  nextAnimeChar();
+}
+
+function nextAnimeChar() {
+  if(animeTimer) clearInterval(animeTimer);
+  document.getElementById('anime-result').style.display = 'none';
+
+  let pool = [];
+  if(animeMode === 'specific') {
+    const pick = document.getElementById('anime-pick')?.value || 'naruto';
+    pool = ANIME_DB[pick] || ANIME_DB.naruto;
+  } else {
+    Object.values(ANIME_DB).forEach(arr => pool.push(...arr));
+  }
+
+  currentAnimeChar = pool[Math.floor(Math.random() * pool.length)];
+  const c = currentAnimeChar;
+
+  document.getElementById('anime-series-hint').innerText = animeMode==='specific' ? `// ${c.series.toUpperCase()} //` : '// ??? ANIME //';
+  document.getElementById('anime-char-display').innerText = c.emoji;
+  document.getElementById('anime-clue').innerText = `Clue: ${c.clue}`;
+
+  // Shuffle options
+  const options = [c.name, ...c.wrong.slice(0,3)].sort(()=>Math.random()-0.5);
+  const optsEl = document.getElementById('anime-options');
+  optsEl.innerHTML = options.map(o => `
+    <button class="anime-opt" onclick="answerAnime('${o.replace(/'/g,"\\'")}', this)">${o}</button>
+  `).join('');
+
+  // Timer 15s
+  let timeLeft = 15;
+  document.getElementById('anime-timer-val').innerText = timeLeft;
+  document.getElementById('anime-timer-bar').style.width = '100%';
+  animeTimer = setInterval(() => {
+    timeLeft--;
+    const tv = document.getElementById('anime-timer-val');
+    const tb = document.getElementById('anime-timer-bar');
+    if(tv) tv.innerText = timeLeft;
+    if(tb) tb.style.width = (timeLeft/15*100)+'%';
+    if(timeLeft <= 0) {
+      clearInterval(animeTimer);
+      timeExpired();
+    }
+  }, 1000);
+}
+
+function answerAnime(chosen, btn) {
+  if(animeTimer) clearInterval(animeTimer);
+  document.querySelectorAll('.anime-opt').forEach(b => b.disabled = true);
+  const correct = currentAnimeChar.name;
+  const isRight = chosen === correct;
+
+  document.querySelectorAll('.anime-opt').forEach(b => {
+    if(b.innerText === correct) b.classList.add('correct');
+    else if(b.innerText === chosen && !isRight) b.classList.add('wrong');
+  });
+
+  const res = document.getElementById('anime-result');
+  res.style.display = 'block';
+
+  if(isRight) {
+    animeScore += 100;
+    animeStreak++;
+    document.getElementById('anime-score').innerText = animeScore;
+    document.getElementById('anime-streak').innerText = animeStreak;
+    const xpGain = 30 + (animeStreak * 5);
+    addXP(xpGain);
+    res.innerHTML = `<div style="text-align:center;padding:14px;background:rgba(0,255,136,0.07);border:1px solid var(--green);border-radius:10px;">
+      <div style="font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;color:var(--green);letter-spacing:2px;">✅ CORRECT! +${xpGain} XP</div>
+      <div style="font-size:0.8rem;color:var(--text2);margin-top:4px;">🔥 Streak: ${animeStreak}</div>
+      <button class="btn btn-cyan" style="margin-top:10px;width:100%;" onclick="nextAnimeChar()">▶ Next Character</button>
+    </div>`;
+    S.animeCorrect = (S.animeCorrect||0)+1;
+    if(animeStreak > (S.animeBestStreak||0)) S.animeBestStreak = animeStreak;
+    if(animeScore > (S.animeBest||0)) S.animeBest = animeScore;
+  } else {
+    animeStreak = 0;
+    document.getElementById('anime-streak').innerText = 0;
+    res.innerHTML = `<div style="text-align:center;padding:14px;background:rgba(255,23,68,0.07);border:1px solid var(--red);border-radius:10px;">
+      <div style="font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;color:var(--red);letter-spacing:2px;">❌ WRONG!</div>
+      <div style="font-size:0.8rem;color:var(--text2);margin-top:4px;">It was <strong style="color:var(--cyan)">${correct}</strong></div>
+      <button class="btn btn-cyan" style="margin-top:10px;width:100%;" onclick="nextAnimeChar()">▶ Try Next</button>
+    </div>`;
+  }
+  saveState();
+  updateAnimePR();
+}
+
+function timeExpired() {
+  document.querySelectorAll('.anime-opt').forEach(b => {
+    b.disabled = true;
+    if(b.innerText === currentAnimeChar.name) b.classList.add('correct');
+  });
+  animeStreak = 0;
+  document.getElementById('anime-streak').innerText = 0;
+  const res = document.getElementById('anime-result');
+  res.style.display = 'block';
+  res.innerHTML = `<div style="text-align:center;padding:14px;background:rgba(255,109,0,0.07);border:1px solid var(--orange);border-radius:10px;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;color:var(--orange);letter-spacing:2px;">⏱ TIME'S UP!</div>
+    <div style="font-size:0.8rem;color:var(--text2);margin-top:4px;">It was <strong style="color:var(--cyan)">${currentAnimeChar.name}</strong></div>
+    <button class="btn btn-cyan" style="margin-top:10px;width:100%;" onclick="nextAnimeChar()">▶ Next Character</button>
+  </div>`;
+}
+
+function skipAnime() {
+  if(animeTimer) clearInterval(animeTimer);
+  // Deduct 50 XP
+  S.xp = Math.max(0, S.xp - 50);
+  S.totalXP = Math.max(0, S.totalXP - 50);
+  animeStreak = 0;
+  document.getElementById('anime-streak').innerText = 0;
+  saveState(); updateHUD();
+
+  const res = document.getElementById('anime-result');
+  res.style.display = 'block';
+  document.querySelectorAll('.anime-opt').forEach(b => {
+    b.disabled = true;
+    if(b.innerText === currentAnimeChar.name) b.classList.add('correct');
+  });
+  res.innerHTML = `<div style="text-align:center;padding:14px;background:rgba(255,23,68,0.07);border:1px solid var(--red);border-radius:10px;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;color:var(--red);letter-spacing:2px;">⏭ SKIPPED — 50 XP LOST!</div>
+    <div style="font-size:0.8rem;color:var(--text2);margin-top:4px;">It was <strong style="color:var(--cyan)">${currentAnimeChar.name}</strong></div>
+    <button class="btn btn-cyan" style="margin-top:10px;width:100%;" onclick="nextAnimeChar()">▶ Next</button>
+  </div>`;
+}
+
+function updateAnimePR() {
+  const b = document.getElementById('anime-best');
+  const bs = document.getElementById('anime-best-streak');
+  const tc = document.getElementById('anime-total-correct');
+  if(b) b.innerText = S.animeBest||0;
+  if(bs) bs.innerText = S.animeBestStreak||0;
+  if(tc) tc.innerText = S.animeCorrect||0;
+}
+
+// ===================== ANIME DRAWING CHALLENGE =====================
+let drawMode = null;
+let drawTimer = null;
+let drawScore = 0;
+let drawStreak = 0;
+let drawTimeLeft = 60;
+let drawTotalTime = 60;
+let drawNoLimit = false;
+let currentDrawChar = null;
+
+function setDrawTime(secs, el) {
+  document.querySelectorAll('.time-chip').forEach(c=>c.classList.remove('active-time'));
+  el.classList.add('active-time');
+  if(secs === 0){ drawNoLimit=true; drawTotalTime=0; }
+  else { drawNoLimit=false; drawTotalTime=secs; }
+  document.getElementById('custom-time-input').value='';
+}
+
+function applyCustomTime() {
+  const val = parseInt(document.getElementById('custom-time-input').value);
+  if(!val||val<10){ alert('Enter at least 10 seconds.'); return; }
+  drawNoLimit=false; drawTotalTime=val;
+  document.querySelectorAll('.time-chip').forEach(c=>c.classList.remove('active-time'));
+  const mins = val>=60?`${Math.floor(val/60)}m${val%60>0?' '+val%60+'s':''}`:val+'s';
+  showXPPop(`Time: ${mins}`);
+}
+
+
+const DRAW_FEATURES = {
+  'Naruto Uzumaki':    ['🍥 Spiral mark on cheeks','👕 Orange jumpsuit','💛 Spiky blonde hair','🎀 Headband with leaf symbol'],
+  'Sasuke Uchiha':     ['⚡ Sharingan eye','🖤 Dark spiky hair','👕 Dark blue outfit','🎀 Leaf headband'],
+  'Kakashi Hatake':    ['😷 Mask covering face','📖 Always reading','🌀 Copy ninja eye','⚪ Silver/white hair'],
+  'Itachi Uchiha':     ['🌙 Akatsuki cloak with red clouds','👁️ Mangekyou Sharingan','🎀 Leaf headband slash','🖤 Long black hair in ponytail'],
+  'Jiraiya':           ['🐸 Toad summoner','📖 Holding a book','💪 Red face markings','⬜ Long white hair'],
+  'Monkey D. Luffy':   ['👒 Straw hat on head','🔴 Scar under left eye','👕 Red vest open chest','🏴‍☠️ Pirate expression'],
+  'Roronoa Zoro':      ['⚔️ Three swords — one in mouth','💚 Short green hair','👕 Black bandana around arm','💪 Muscular build'],
+  'Nami':              ['🟠 Orange short hair','🌩️ Clima-Tact staff','🧭 Tattoo on left shoulder','👗 Orange outfit'],
+  'Portgas D. Ace':    ['🔥 Fire from fists','🎩 Orange hat with smiling face','💪 Tattoo on arm: ASCE','👕 Open vest, no shirt'],
+  'Trafalgar Law':     ['💀 Spotted fur hat','⚡ ROOM bubble around him','🗡️ Nodachi sword','💉 Tattoos on hands and neck'],
+  'Goku':              ['🐉 Orange gi with blue undershirt','💛 Spiky hair (Super Saiyan golden)','💪 Muscular body','🎀 Blue wristbands'],
+  'Vegeta':            ['👑 Prince attitude pose','💛 Flame-shaped upright hair','🔵 Blue battle armor','💪 Muscular with gloves'],
+  'Piccolo':           ['💚 Green skin with antenna','👂 Large pointed ears','👘 Purple gi with white cape','🎀 White turban/headband'],
+  'Frieza':            ['❄️ White and purple body','💜 Purple markings on face','🦾 Mechanical arm (final form)','👑 Alien emperor pose'],
+  'Gohan':             ['📚 Glasses (adult form)','💛 Spiky hair (SSJ)','👕 Blue gi with orange obi','🎀 Yellow headband (teen)'],
+  'Tanjiro Kamado':    ['🌊 Checkered black and green kimono','🔴 Scar on forehead','💧 Teardrop-shaped birthmark','🎀 Hanafuda earrings'],
+  'Nezuko Kamado':     ['🎋 Bamboo muzzle in mouth','🌸 Pink kimono','👁️ Pink slit demon eyes','🌷 Small and cute face'],
+  'Zenitsu Agatsuma':  ['⚡ Lightning bolt mark on face','💛 Yellow-gradient hair','👘 Yellow haori over uniform','😱 Terrified expression'],
+  'Inosuke Hashibira': ['🐗 Boar head mask','💪 Muscular bare upper body','🗡️ Two jagged blades','👕 Partial uniform below waist'],
+  'Rengoku Kyojuro':   ['🔥 Flame-pattern haori','💛 Flaming yellow and red hair','👁️ Yellow eyes with red pupils','😁 Huge enthusiastic smile'],
+  'Eren Yeager':       ['🎀 Survey Corps cloak','👁️ Green piercing eyes','🔑 Key on necklace','✂️ Short brown hair with undercut'],
+  'Mikasa Ackerman':   ['🧣 Red scarf around neck','🖤 Short black hair','💪 Very muscular arms','🎀 Survey Corps gear'],
+  'Levi Ackerman':     ['🗡️ Two blades in reverse grip','💪 Short but intimidating stance','👁️ Undercut with side-swept hair','👕 Cravat/white neck tie'],
+  'Armin Arlert':      ['💡 Thoughtful expression','🌊 Blonde bowl-cut hair','🎀 Survey Corps uniform','👀 Big blue eyes'],
+  'Reiner Braun':      ['🛡️ Armored Titan plates','💛 Short blonde hair','💪 Very broad shoulders','🎀 Warrior uniform from Marley'],
+  'Ichigo Kurosaki':   ['🌙 Large black zanpakuto Zangetsu','🟠 Spiky orange hair','👘 Black shinigami robes','😠 Intense furrowed brow'],
+  'Rukia Kuchiki':     ['❄️ Small petite figure','🖤 Short black hair with fringe','👘 White lieutenant uniform','🗡️ Small zanpakuto'],
+  'Byakuya Kuchiki':   ['🌸 Flower petal blades (Senbonzakura)','⬜ Long black hair with kenseikan pins','👘 Noble captain haori','😐 Stoic expressionless face'],
+  'Kenpachi Zaraki':   ['🔔 Bells tied in spiky hair','🩹 Eye patch on right eye','💪 Giant imposing figure','🗡️ Massive oversized sword'],
+  'Sosuke Aizen':      ['👓 Glasses (early arc)','🟤 Neatly combed brown hair','👘 Captain haori (later torn)','😏 Calm sinister smile'],
+  'Izuku Midoriya':    ['💚 Messy curly green hair','🌿 Green lightning aura','👕 Green bunny hero suit','📓 Notebook in hand'],
+  'Katsuki Bakugo':    ['💥 Explosions from palms','💛 Spiky ash-blonde hair','😡 Angry aggressive expression','🧤 Large grenade gauntlets'],
+  'All Might':         ['💪 MASSIVE muscular build','💛 Angular Superman-style hair','😁 Giant iconic smile','👕 Silver Age hero suit'],
+  'Shoto Todoroki':    ['❄️ Ice on left side of body','🔥 Fire on right side','⬜🔴 Half white half red hair','😐 Serious stoic expression'],
+  'Tomura Shigaraki':  ['🖐️ Severed hands all over body','🔵 Light blue disheveled hair','👁️ Red irritated eyes','😱 Deranged villain smile'],
+  'Yuji Itadori':      ['👊 Muscular athletic build','🟤 Undercut pink-brown hair','🌸 Pink hair (Sukuna pink highlights)','💪 Extremely tall and broad'],
+  'Gojo Satoru':       ['🕶️ Black blindfold or sunglasses','⬜ White spiky hair','👁️ Six Eyes (bright blue under blindfold)','🔵 Dark uniform or casual clothes'],
+  'Megumi Fushiguro':  ['🐕 Shadow dogs emerging from ground','🖤 Dark spiky hair','👁️ Dark serious eyes','👕 Jujutsu High uniform'],
+  'Ryomen Sukuna':     ['👹 4 eyes on face','🖐️ Extra pair of arms','💜 Tattoo lines over entire body','😈 Wicked grin'],
+  'Nobara Kugisaki':   ['🔨 Wooden hammer weapon','📌 Nails in the hammer','🟤 Brown hair in a bun','👕 Jujutsu High uniform'],
+  'Gon Freecss':       ['🎣 Fishing rod slung over shoulder','💚 Spiky black hair with green tips','👕 Green jacket with white tee','😁 Bright cheerful smile'],
+  'Killua Zoldyck':    ['⚡ Lightning from hands','⬜ White spiky hair','👕 Blue and white outfit','😏 Confident smirk'],
+  'Hisoka':            ['🃏 Playing cards floating around','🎭 Clown makeup on face','🟣 Purple/pink sharp hair','😏 Menacing flirtatious smile'],
+  'Kurapika':          ['🔗 Chain weapon from hand','👁️ Red eyes when angered','🟡 Blonde bob haircut','👘 Traditional Kurta white outfit'],
+  'Meruem':            ['♟️ Chess piece nearby','🟢 Small tail with ball at end','💜 Royal robe/cape','👁️ Empty cold eyes'],
+  'Edward Elric':      ['⚙️ Metal automail right arm','🟡 Long blonde hair in braid','🔴 Long red coat','😤 Short — very defensive about height'],
+  'Roy Mustang':       ['🔥 Flame alchemy ignition gloves','🖤 Slicked back black hair','💙 Blue military uniform','😎 Confident commanding stance'],
+  'Alphonse Elric':    ['🛡️ Giant hollow suit of armour','❤️ Blood seal drawn inside helmet','🔒 No body inside — just armor','⚙️ Automail-like joint details'],
+  'Scar':              ['✝️ Cross-shaped scar on forehead','💪 Large muscular build','🟤 Brown skin with dark hair','🟣 Ishvalan tattoo on right arm'],
+  'Lust':              ['💄 Long black hair flowing down','💋 Red lips and elegant face','🔴 Ouroboros tattoo on chest','💅 Fingers extending into sharp spears'],
+};
+
+function selectDrawMode(mode) {
+  drawMode = mode;
+  document.getElementById('dmode-random').className = 'anime-mode-card'+(mode==='random'?' selected':'');
+  document.getElementById('dmode-specific').className = 'anime-mode-card'+(mode==='specific'?' selected-magenta':'');
+  document.getElementById('draw-anime-selector').style.display = mode==='specific'?'block':'none';
+  document.getElementById('start-draw-btn').disabled = false;
+}
+
+function startDrawRound() {
+  drawScore=0; drawStreak=0;
+  document.getElementById('draw-score').innerText=0;
+  document.getElementById('draw-streak').innerText=0;
+  document.getElementById('draw-setup').style.display='none';
+  document.getElementById('draw-game').style.display='block';
+  nextDrawChar();
+}
+
+function nextDrawChar() {
+  if(drawTimer) clearInterval(drawTimer);
+  document.getElementById('draw-result').style.display='none';
+
+  let pool=[];
+  if(drawMode==='specific'){
+    const pick=document.getElementById('draw-anime-pick')?.value||'naruto';
+    pool=ANIME_DB[pick]||ANIME_DB.naruto;
+  } else {
+    Object.values(ANIME_DB).forEach(arr=>pool.push(...arr));
+  }
+
+  currentDrawChar=pool[Math.floor(Math.random()*pool.length)];
+  const c=currentDrawChar;
+
+  document.getElementById('draw-char-name').innerText=c.name.toUpperCase();
+  document.getElementById('draw-char-emoji').innerText=c.emoji;
+  document.getElementById('draw-series-hint').innerText=drawMode==='specific'?`// ${c.series.toUpperCase()} //`:'// ??? ANIME //';
+  document.getElementById('draw-char-clue').innerText=`Series: ${c.series}`;
+
+  // Features to draw
+  const features = DRAW_FEATURES[c.name] || ['Draw their signature look','Focus on hair style','Add their weapon or item','Draw their outfit color'];
+  const featEl=document.getElementById('draw-features');
+  if(featEl) featEl.innerHTML=features.map(f=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+      <span style="color:var(--cyan);font-size:1rem;">›</span>
+      <span style="font-size:0.88rem;font-weight:600;color:var(--text2);">${f}</span>
+    </div>`).join('');
+
+  // Timer
+  if(drawNoLimit){
+    const tv=document.getElementById('draw-timer-val');
+    const bar=document.getElementById('draw-timer-bar');
+    if(tv){tv.innerText='∞';tv.style.color='var(--cyan)';}
+    if(bar){bar.style.width='100%';bar.style.background='linear-gradient(90deg,var(--cyan),var(--magenta))';}
+    return;
+  }
+
+  drawTimeLeft=drawTotalTime;
+  updateDrawTimer();
+  const bar=document.getElementById('draw-timer-bar');
+  if(bar){bar.style.width='100%';bar.style.background='linear-gradient(90deg,var(--cyan),var(--magenta))';}
+  drawTimer=setInterval(()=>{
+    drawTimeLeft--;
+    updateDrawTimer();
+    if(bar) bar.style.width=(drawTimeLeft/drawTotalTime*100)+'%';
+    if(drawTimeLeft<=Math.min(30,drawTotalTime*0.2) && bar)
+      bar.style.background='linear-gradient(90deg,var(--orange),var(--red))';
+    if(drawTimeLeft<=0){ clearInterval(drawTimer); drawTimeExpired(); }
+  },1000);
+}
+
+function updateDrawTimer(){
+  if(drawNoLimit) return;
+  const m=Math.floor(drawTimeLeft/60);
+  const s=drawTimeLeft%60;
+  const el=document.getElementById('draw-timer-val');
+  if(el){
+    el.innerText=`${m}:${pad(s)}`;
+    el.style.color=drawTimeLeft<=Math.min(30,drawTotalTime*0.2)?'var(--red)':'var(--orange)';
+  }
+}
+
+function confirmDrawing() {
+  if(drawTimer) clearInterval(drawTimer);
+  drawScore+=150;
+  drawStreak++;
+  document.getElementById('draw-score').innerText=drawScore;
+  document.getElementById('draw-streak').innerText=drawStreak;
+
+  const xpGain=50+(drawStreak*10);
+  addXP(xpGain);
+  S.drawTotal=(S.drawTotal||0)+1;
+  if(drawStreak>(S.drawBestStreak||0)) S.drawBestStreak=drawStreak;
+  if(drawScore>(S.drawBest||0)) S.drawBest=drawScore;
+  saveState(); updateDrawRecords();
+
+  const res=document.getElementById('draw-result');
+  res.style.display='block';
+  res.innerHTML=`<div style="text-align:center;padding:14px;background:rgba(0,255,136,0.07);border:1px solid var(--green);border-radius:10px;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;color:var(--green);letter-spacing:2px;">🎨 DRAWING LOGGED! +${xpGain} XP</div>
+    <div style="font-size:0.8rem;color:var(--text2);margin-top:4px;">🔥 Streak: ${drawStreak} | Keep going!</div>
+  </div>`;
+  setTimeout(()=>nextDrawChar(),1800);
+}
+
+function skipDrawing() {
+  if(drawTimer) clearInterval(drawTimer);
+  S.xp=Math.max(0,S.xp-60);
+  S.totalXP=Math.max(0,S.totalXP-60);
+  drawStreak=0;
+  document.getElementById('draw-streak').innerText=0;
+  saveState(); updateHUD();
+
+  const res=document.getElementById('draw-result');
+  res.style.display='block';
+  res.innerHTML=`<div style="text-align:center;padding:14px;background:rgba(255,23,68,0.07);border:1px solid var(--red);border-radius:10px;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;color:var(--red);letter-spacing:2px;">⏭ SKIPPED — 60 XP LOST!</div>
+    <div style="font-size:0.8rem;color:var(--text2);margin-top:4px;">Streak reset. Draw the next one!</div>
+  </div>`;
+  setTimeout(()=>nextDrawChar(),1500);
+}
+
+function drawTimeExpired() {
+  drawStreak=0;
+  document.getElementById('draw-streak').innerText=0;
+  const res=document.getElementById('draw-result');
+  res.style.display='block';
+  res.innerHTML=`<div style="text-align:center;padding:14px;background:rgba(255,109,0,0.07);border:1px solid var(--orange);border-radius:10px;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;color:var(--orange);letter-spacing:2px;">⏱ TIME'S UP!</div>
+    <div style="font-size:0.8rem;color:var(--text2);margin-top:4px;">Did you finish? Tap confirm or move on.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn btn-green" style="flex:1;" onclick="confirmDrawing()">✅ Yes, I Drew It</button>
+      <button class="btn btn-orange" style="flex:1;" onclick="nextDrawChar()">▶ Next</button>
+    </div>
+  </div>`;
+}
+
+function updateDrawRecords(){
+  const b=document.getElementById('draw-best');
+  const bs=document.getElementById('draw-best-streak');
+  const t=document.getElementById('draw-total');
+  if(b) b.innerText=S.drawBest||0;
+  if(bs) bs.innerText=S.drawBestStreak||0;
+  if(t) t.innerText=S.drawTotal||0;
+}
+
+// ===================== SAVE / EXPORT / IMPORT =====================
+function renderSavePage() {
+  document.getElementById('sv-lvl').innerText = S.lvl||1;
+  document.getElementById('sv-xp').innerText = S.totalXP||0;
+  document.getElementById('sv-missions').innerText = S.missions||0;
+  document.getElementById('sv-streak').innerText = S.streak||0;
+  document.getElementById('sv-badges').innerText = S.badges?.length||0;
+  document.getElementById('sv-date').innerText = new Date().toLocaleString();
+}
+
+function exportSave() {
+  S.exportDate = new Date().toISOString();
+  const data = JSON.stringify(S, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `viaai-save-lv${S.lvl}-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showXPPop('Save Exported!');
+}
+
+function copySaveClipboard() {
+  S.exportDate = new Date().toISOString();
+  const data = JSON.stringify(S);
+  navigator.clipboard.writeText(data).then(()=>{
+    showXPPop('Copied!');
+    const btn = document.querySelector('[onclick="copySaveClipboard()"]');
+    if(btn){const o=btn.innerText;btn.innerText='✅ Copied!';setTimeout(()=>btn.innerText=o,2000);}
+  }).catch(()=>alert('Copy failed — try Export instead.'));
+}
+
+function importSave() {
+  const text = document.getElementById('import-text').value.trim();
+  if(!text){alert('Paste your save code first.');return;}
+  try {
+    const parsed = JSON.parse(text);
+    if(typeof parsed.xp === 'undefined') throw new Error('Invalid save');
+    if(!confirm('This will REPLACE your current progress. Continue?')) return;
+    S = {...S,...parsed};
+    saveState(); updateHUD();
+    renderSavePage();
+    showXPPop('Save Restored!');
+    document.getElementById('import-text').value='';
+    alert(`✅ Save restored! Welcome back Level ${S.lvl} Operative.`);
+  } catch(e) {
+    alert('Invalid save code. Make sure you copied the full text.');
+  }
+}
+
+function importFromFile(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('import-text').value = e.target.result;
+    importSave();
+  };
+  reader.readAsText(file);
+}
+
+function confirmReset() {
+  if(confirm('⚠️ Are you sure? This will DELETE all your progress forever!')) {
+    if(confirm('Last chance — export your save first if needed. RESET everything?')) {
+      localStorage.removeItem('via3_state');
+      location.reload();
+    }
+  }
+}
+
+// Override showPage to also render save page
+const _origShowPage = showPage;
+window.showPage = function(id) {
+  _origShowPage(id);
+  if(id==='saves') renderSavePage();
+  if(id==='anime') updateAnimePR();
+  if(id==='draw') updateDrawRecords();
+};
+</script>
+
+<!-- ===== PWA INSTALL BANNER ===== -->
+<style>
+.install-banner {
+  position: fixed;
+  bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120px);
+  width: calc(100% - 32px); max-width: 500px;
+  background: var(--card2);
+  border: 1px solid rgba(0,229,255,0.3);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+  z-index: 9000;
+  box-shadow: 0 0 40px rgba(0,229,255,0.15);
+  transition: transform 0.4s cubic-bezier(.4,0,.2,1);
+}
+.install-banner.show { transform: translateX(-50%) translateY(0); }
+.install-logo {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Orbitron', monospace;
+  font-size: 1.2rem; font-weight: 900; color: var(--cyan);
+  text-shadow: 0 0 10px var(--cyan);
+  flex-shrink: 0;
+}
+.install-text { flex: 1; }
+.install-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem; font-weight: 700;
+  color: var(--white); letter-spacing: 2px;
+  margin-bottom: 3px;
+}
+.install-sub { font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+.install-btns { display: flex; gap: 8px; flex-shrink: 0; }
+.install-yes {
+  padding: 9px 16px; border-radius: 8px;
+  background: var(--cyan); color: #000;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.58rem; font-weight: 700; letter-spacing: 1px;
+  border: none; cursor: pointer;
+  box-shadow: 0 0 15px rgba(0,229,255,0.4);
+  transition: all 0.2s;
+}
+.install-yes:hover { background: #fff; }
+.install-no {
+  padding: 9px 12px; border-radius: 8px;
+  background: transparent; color: var(--muted);
+  font-family: 'Orbitron', monospace;
+  font-size: 0.58rem; font-weight: 700;
+  border: 1px solid var(--border); cursor: pointer;
+  transition: all 0.2s;
+}
+.install-no:hover { color: var(--text); border-color: var(--border2); }
+
+/* iOS instruction popup */
+.ios-popup {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+  background: var(--card2); border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 14px; padding: 16px 20px;
+  width: calc(100% - 32px); max-width: 400px;
+  text-align: center; z-index: 9001;
+  font-size: 0.85rem; font-weight: 600; color: var(--text);
+  line-height: 1.6;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+  animation: fadeUp 0.3s ease;
+}
+.ios-popup::after {
+  content: '▼';
+  position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+  color: rgba(0,229,255,0.3); font-size: 1rem;
+}
+</style>
+
+<!-- Install Banner HTML -->
+<div class="install-banner" id="install-banner">
+  <div class="install-logo">V</div>
+  <div class="install-text">
+    <div class="install-title">INSTALL VIA AI</div>
+    <div class="install-sub">Add to home screen — works offline</div>
+  </div>
+  <div class="install-btns">
+    <button class="install-yes" id="install-yes">Install</button>
+    <button class="install-no" id="install-no">✕</button>
+  </div>
+</div>
+
+<script>
+// ===== SERVICE WORKER =====
+const SW_CODE = `
+const CACHE = 'via-ai-v3';
+const ASSETS = [self.location.pathname];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+    const clone = res.clone();
+    caches.open(CACHE).then(c => c.put(e.request, clone));
+    return res;
+  }).catch(() => caches.match(e.request))));
+});
+`;
+
+if ('serviceWorker' in navigator) {
+  const blob = new Blob([SW_CODE], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+
+// ===== PWA INSTALL PROMPT =====
+let deferredPrompt = null;
+const banner = document.getElementById('install-banner');
+const installYes = document.getElementById('install-yes');
+const installNo = document.getElementById('install-no');
+
+// Check if already installed
+const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+if (!isInstalled) {
+  // Android / Windows / Linux Chrome — native prompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    setTimeout(() => banner.classList.add('show'), 2000);
+  });
+
+  installYes.addEventListener('click', async () => {
+    banner.classList.remove('show');
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+    } else {
+      // iOS Safari instruction
+      const popup = document.createElement('div');
+      popup.className = 'ios-popup';
+      popup.innerHTML = `
+        <strong style="color:var(--cyan);font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:2px;">INSTALL ON iOS</strong><br><br>
+        Tap the <strong>Share button</strong> (□↑) at the bottom of Safari<br>
+        then tap <strong>"Add to Home Screen"</strong> → <strong>"Add"</strong>
+      `;
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 6000);
+    }
+  });
+
+  installNo.addEventListener('click', () => {
+    banner.classList.remove('show');
+    localStorage.setItem('via_install_dismissed', '1');
+  });
+
+  // Show for iOS if not dismissed
+  const dismissed = localStorage.getItem('via_install_dismissed');
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
+  if (isIOS && isSafari && !dismissed) {
+    setTimeout(() => banner.classList.add('show'), 2500);
+  }
+}
+</script>
+</body>
+</html>
